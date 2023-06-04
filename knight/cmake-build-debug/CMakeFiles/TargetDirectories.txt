@@ -1,5 +1,5 @@
-D:/konjac/UCAS-DS-2023/knight/cmake-build-debug/CMakeFiles/knight.dir
-D:/konjac/UCAS-DS-2023/knight/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/konjac/UCAS-DS-2023/knight/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-D:/konjac/UCAS-DS-2023/knight/cmake-build-debug/CMakeFiles/knight_autogen_timestamp_deps.dir
-D:/konjac/UCAS-DS-2023/knight/cmake-build-debug/CMakeFiles/knight_autogen.dir
+C:/Users/wangm/Desktop/UCAS-DS-2023/UCAS-DS-2023/knight/cmake-build-debug/CMakeFiles/knight.dir
+C:/Users/wangm/Desktop/UCAS-DS-2023/UCAS-DS-2023/knight/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/wangm/Desktop/UCAS-DS-2023/UCAS-DS-2023/knight/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/wangm/Desktop/UCAS-DS-2023/UCAS-DS-2023/knight/cmake-build-debug/CMakeFiles/knight_autogen_timestamp_deps.dir
+C:/Users/wangm/Desktop/UCAS-DS-2023/UCAS-DS-2023/knight/cmake-build-debug/CMakeFiles/knight_autogen.dir
