@@ -1,11 +1,17 @@
 #include <QApplication>
 #include <QPushButton>
+#include <QSpinBox>
+#include <QSlider>
+#include <QHBoxLayout>
+#include "SBT.h"
+#include "bstselect.h"
 
-int main(int argc, char *argv[]) {
-    QApplication a(argc, argv);
-    QPushButton button("Hello world!", nullptr);
-    button.resize(200, 100);
-    button.show();
+
+int main(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+    BST w;
+    w.show();
     return QApplication::exec();
 }
 
