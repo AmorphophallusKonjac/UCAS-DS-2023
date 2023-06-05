@@ -13,9 +13,10 @@
 
 class SBT {
     public:
+        SBT();
+        ~SBT();
         TreeLink root;
         TreeLink zero;
-        void init();                                    //初始化SBT
         TreeLink newnode(int v);                        //新建节点
         int del(TreeLink &x, int v);                    //删除
         void ins(TreeLink &x, int v);                   //插入
@@ -29,7 +30,8 @@ class SBT {
         static void RightRotate(TreeLink &x);           //右旋
         void maintain(TreeLink &x, bool t);             //维持
         void insrt(TreeLink &x, int v);                 //破坏树结构的插入
-        int delet(TreeLink &x, int v);             //破坏树结构的删除
+        int delet(TreeLink &x, int v);                  //破坏树结构的删除
+        void rel(TreeLink &x);                          //清空节点
 };
 
 

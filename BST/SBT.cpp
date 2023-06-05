@@ -4,6 +4,20 @@
 
 #include "SBT.h"
 
+SBT::SBT() {
+    zero = (TreeLink)malloc(sizeof(TreeNode));
+    zero->size = 0;
+    zero->cnt = 0;
+    zero->lch = zero;
+    zero->rch = zero;
+    root = zero;
+}
+
+SBT::~SBT() {
+    rel(root);
+    free(zero);
+}
+
 void SBT::LeftRotate(TreeLink &x) {
     TreeLink k = x->rch;
     x->rch = k->lch;
@@ -20,15 +34,6 @@ void SBT::RightRotate(TreeLink &x) {
     k->size = x->size;
     x->size = x->lch->size + x->rch->size + 1;
     x = k;
-}
-
-void SBT::init() {
-    zero = (TreeLink)malloc(sizeof(TreeNode));
-    zero->size = 0;
-    zero->cnt = 0;
-    zero->lch = zero;
-    zero->rch = zero;
-    root = zero;
 }
 
 void SBT::maintain(TreeLink &x, bool t) {
@@ -158,4 +163,12 @@ int SBT::suc(TreeLink &x, int v) {
         return suc(x->rch, v);
     else
         return std::min(x->value, suc(x->lch, v));
+}
+
+void SBT::rel(TreeLink &x) {
+    if (x == zero)
+        return;
+    rel(x->lch);
+    rel(x->rch);
+    free(x);
 }

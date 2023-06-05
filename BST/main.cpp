@@ -1,11 +1,8 @@
 #include <QApplication>
-#include <QPushButton>
-#include <QSpinBox>
-#include <QSlider>
-#include <QHBoxLayout>
 #include "SBT.h"
-#include "bstselect.h"
+#include "bst.h"
 
+SBT SBT_Tree;
 
 int main(int argc, char *argv[])
 {
