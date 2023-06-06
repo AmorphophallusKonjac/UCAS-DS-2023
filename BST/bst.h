@@ -30,8 +30,10 @@ private:
     QLabel *msgLabel;
     void iniUI();
     void SetPaint();
-    void ExPaint(TreeLink x, QGraphicsScene* scene);
-    int BSTtype;                                    //平衡树类型
+    void ExPaint(TreeLink t, QGraphicsScene* scene, int x, int y);      //画出树
+    int BSTtype;                                                        //平衡树类型
+    int NodeWeight;
+    int NodeHeight;
 };
 
 

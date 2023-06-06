@@ -21,6 +21,8 @@ BST::~BST() {
 }
 
 void BST::iniUI() {
+    NodeHeight = 40;
+    NodeWeight = 80;
     msgLabel = new QLabel;
     msgLabel->setMinimumSize(msgLabel->sizeHint());
     msgLabel->setAlignment(Qt::AlignHCenter);
@@ -61,23 +63,23 @@ void BST::iniUI() {
 }
 
 void BST::SetPaint() {
-    int dx = 10; int dy = 20; int k = 2;
     auto *scene = new QGraphicsScene;
-    //scene->setSceneRect(QRectF(0,0,800,600));
-    auto   *item = new QGraphicsEllipseItem(QRectF(0,0,50,50));
-    QGraphicsTextItem *testText = new QGraphicsTextItem;
-    testText->setPlainText(tr("12"));
-    testText->setPos(500, 500);
+   /* auto *item = new QGraphicsRectItem(QRectF(0,0,NodeWeight,NodeHeight));
+    auto *testText = new QGraphicsTextItem;
+    testText->setPlainText("123123");
+    QFont font = testText->font();
+    font.setPointSize(15);
+    testText->setFont(font);
+    testText->setPos(100, 100);
     QPen    pen;
     pen.setWidth(2);
     item->setPen(pen);
-    item->setBrush(Qt::red);
+    item->setBrush(Qt::darkBlue);
 
 
     scene->addItem(item);
-    scene->addItem(testText);
-    scene->setBackgroundBrush(Qt::green);
-    /*switch (BSTtype) {
+    scene->addItem(testText);*/
+    switch (BSTtype) {
         case 0: scene->addText("This is Splay");
         break;
         case 1:
@@ -89,10 +91,11 @@ void BST::SetPaint() {
         case 2: scene->addText("This is AVL");
         break;
         case 3: scene->addText("This is Treap");
-    }*/
+    }
     ui->PaintTree->setScene(scene);
 }
 
-void BST::ExPaint(TreeLink x, QGraphicsScene *scene) {
+void BST::ExPaint(TreeLink t, QGraphicsScene *scene, int x, int y) {
+    auto *rec = new QGraphicsRectItem(QRectF(x, y, x + NodeWeight, y + NodeHeight));
 
 }
