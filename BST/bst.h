@@ -24,16 +24,36 @@ public:
     ~BST() override;
 
     SBT SBTtree;
-
+    int value;
+public slots:
+    void fnd();
+    void ins();
+    void del();
+    void UpdateValue();
+    void reset();
 private:
     Ui::BST *ui;
     QLabel *msgLabel;
+    QLabel *rltLabel;
     void iniUI();
     void SetPaint();
-    void ExPaint(TreeLink t, QGraphicsScene* scene, int x, int y);      //画出树
     int BSTtype;                                                        //平衡树类型
-    int NodeWeight;
-    int NodeHeight;
+    TreeLink SelectedNode;
+    TreeLink SBT_SelectedNode;
+    TreeLink Splay_SelectedNode;
+    TreeLink AVL_SelectedNode;
+    TreeLink Treap_SelectedNode;
+    double NodeWidth;
+    double NodeHeight;
+    double NodeGapX;
+    double NodeGapY;
+    int textHeight;
+    void CalcWidth(TreeLink x);
+    void CalcPos(TreeLink t, double x, double y);
+    void GenScene(TreeLink x, QGraphicsScene *scene);
+    void PaintTree(TreeLink x, QGraphicsScene *scene);
+
+    void wheelEvent(QWheelEvent *event) override;
 };
 
 

@@ -59,7 +59,7 @@
         <item>
          <widget class="QLabel" name="inputLabel">
           <property name="text">
-           <string>操作数据:</string>
+           <string>操作参数:</string>
           </property>
          </widget>
         </item>

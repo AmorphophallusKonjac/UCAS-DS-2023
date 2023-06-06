@@ -5,17 +5,11 @@
 #include "SBT.h"
 
 SBT::SBT() {
-    zero = (TreeLink)malloc(sizeof(TreeNode));
-    zero->size = 0;
-    zero->cnt = 0;
-    zero->lch = zero;
-    zero->rch = zero;
-    root = zero;
+    root = nullptr;
 }
 
 SBT::~SBT() {
     rel(root);
-    free(zero);
 }
 
 void SBT::LeftRotate(TreeLink &x) {
@@ -23,7 +17,7 @@ void SBT::LeftRotate(TreeLink &x) {
     x->rch = k->lch;
     k->lch = x;
     k->size = x->size;
-    x->size = x->lch->size + x->rch->size + 1;
+    x->size = ((x->lch != nullptr) ? x->lch->size : 0) + ((x->rch != nullptr) ? x->rch->size : 0) + 1;
     x = k;
 }
 
@@ -32,16 +26,38 @@ void SBT::RightRotate(TreeLink &x) {
     x->lch = k->rch;
     k->rch = x;
     k->size = x->size;
-    x->size = x->lch->size + x->rch->size + 1;
+    x->size = ((x->lch != nullptr) ? x->lch->size : 0) + ((x->rch != nullptr) ? x->rch->size : 0) + 1;
     x = k;
 }
 
 void SBT::maintain(TreeLink &x, bool t) {
+    if (x == nullptr) return;
+    int llsize, lrsize, rlsize, rrsize, lsize, rsize;
+    lsize = (x->lch != nullptr) ? x->lch->size : 0;
+    rsize = (x->rch != nullptr) ? x->rch->size : 0;
+    if (lsize) {
+        llsize = (x->lch->lch != nullptr) ? x->lch->lch->size : 0;
+        lrsize = (x->lch->rch != nullptr) ? x->lch->rch->size : 0;
+    }
+    else {
+        llsize = 0;
+        lrsize = 0;
+    }
+    if (rsize) {
+        rlsize = (x->rch->lch != nullptr) ? x->rch->lch->size : 0;
+        rrsize = (x->rch->rch != nullptr) ? x->rch->rch->size : 0;
+    }
+    else {
+        rlsize = 0;
+        rrsize = 0;
+    }
     if (!t) {
-        if (x->lch->lch->size > x->rch->size)
+        //if (x->lch->lch->size > x->rch->size)
+        if (llsize > rsize)
             RightRotate(x);
         else
-            if (x->lch->rch->size > x->rch->size) {
+            //if (x->lch->rch->size > x->rch->size) {
+            if (lrsize > rsize) {
                 LeftRotate(x->lch);
                 RightRotate(x);
             }
@@ -49,10 +65,12 @@ void SBT::maintain(TreeLink &x, bool t) {
                 return;
     }
     else {
-        if (x->rch->rch->size > x->lch->size)
+        //if (x->rch->rch->size > x->lch->size)
+        if (rrsize > lsize)
             LeftRotate(x);
         else
-            if (x->rch->lch->size > x->rch->size) {
+            //if (x->rch->lch->size > x->rch->size) {
+            if (rlsize > rsize) {
                 RightRotate(x->rch);
                 LeftRotate(x);
             }
@@ -68,28 +86,44 @@ void SBT::maintain(TreeLink &x, bool t) {
 TreeLink SBT::newnode(int v) {
     TreeLink p;
     p = (TreeLink)malloc(sizeof(TreeNode));
-    p->lch = zero;
-    p->rch = zero;
+    p->lch = nullptr;
+    p->rch = nullptr;
     p->cnt = 1;
     p->size = 1;
     p->value = v;
     return p;
 }
 
-void SBT::ins(TreeLink &x, int v) {
-        insrt(x, v);
+TreeLink SBT::ins(TreeLink &x, int v) {
+    TreeLink p = fnd(root, v);
+    if (p == nullptr)
+        p = insrt(x, v);
+    else
+        p->cnt += 1;
+    return p;
 }
 
+// 0 fail
+// 1 success and left
+// 2 success and no left
 int SBT::del(TreeLink &x, int v) {
+    int rlt;
     TreeLink p = fnd(x, v);
-    if (p == zero)
-        return 1;
-    delet(x, v);
-    return 0;
+    if (p == nullptr)
+        return 0;
+    if (p->cnt > 1) {
+        rlt = 1;
+        p->cnt -= 1;
+    }
+    else {
+        rlt = 2;
+        delet(x, v);
+    }
+    return rlt;
 }
 
 TreeLink SBT::fnd(TreeLink &x, int v) {
-    if (x == zero) return x;
+    if (x == nullptr) return x;
     if (x->value == v) return x;
     if (v < x->value)
         return fnd(x->lch, v);
@@ -97,32 +131,46 @@ TreeLink SBT::fnd(TreeLink &x, int v) {
         return fnd(x->rch, v);
 }
 
-void SBT::insrt(TreeLink &x, int v) {
-    if (x == zero) {
+TreeLink SBT::insrt(TreeLink &x, int v) {
+    TreeLink p;
+    if (x == nullptr) {
         x = newnode(v);
-        return;
+        return x;
     }
     x->size += 1;
     if (v <= x->value)
-        insrt(x->lch, v);
+        p = insrt(x->lch, v);
     else
-        insrt(x->rch, v);
+        p = insrt(x->rch, v);
     maintain(x, v > x->value);
+    return p;
 }
 
-int SBT::delet(TreeLink &x, int v) {
-    int ret = 0;
+retdata SBT::delet(TreeLink &x, int v) {
+    retdata ret = {0, 0};
+    retdata y;
     x->size -= 1;
-    if (x->value == v || v < x->value && x->lch == zero || v > x->value && x->rch == zero) {
-        ret = x->value;
-        if (x->lch == zero && x->rch == zero)
-            x = zero;
-        else if (x->lch == zero && x->rch != zero)
-            x = x->rch;
-        else if (x->lch != zero && x->rch == zero)
-            x = x->lch;
-        else
-            x->value = delet(x->lch, x->value + 1);
+    if (x->value == v || v < x->value && x->lch == nullptr || v > x->value && x->rch == nullptr) {
+        ret = (retdata){x->cnt, x->value};
+        if (x->lch == nullptr && x->rch == nullptr) {
+            free(x);
+            x = nullptr;
+        }
+        else if (x->lch == nullptr && x->rch != nullptr) {
+            TreeLink p = x->rch;
+            free(x);
+            x = p;
+        }
+        else if (x->lch != nullptr && x->rch == nullptr) {
+            TreeLink p = x->lch;
+            free(x);
+            x = p;
+        }
+        else {
+            y = delet(x->lch, x->value + 1);
+            x->value = y.value;
+            x->cnt = y.cnt;
+        }
         return ret;
     }
     if (v < x->value)
@@ -132,25 +180,25 @@ int SBT::delet(TreeLink &x, int v) {
 }
 
 int SBT::rank(TreeLink &x, int v) {
-    if (x == zero)
+    if (x == nullptr)
         return 1;
     if (v <= x->value)
         return rank(x->lch, v);
     else
-        return x->lch->size + 1 + rank(x->rch, v);
+        return ((x->lch != nullptr) ? x->lch->size : 0) + 1 + rank(x->rch, v);
 }
 
 int SBT::sel(TreeLink &x, int v) {
-    if (x->lch->size + 1 == v)
+    if (((x->lch != nullptr) ? x->lch->size : 0) + 1 == v)
         return x->value;
-    if (x->lch->size + 1 < v)
-        return sel(x->rch, v - x->lch->size - 1);
+    if (((x->lch != nullptr) ? x->lch->size : 0) + 1 < v)
+        return sel(x->rch, v - ((x->lch != nullptr) ? x->lch->size : 0) - 1);
     else
         return sel(x->lch, v);
 }
 
 int SBT::pre(TreeLink &x, int v) {
-    if (x == zero) return INT_MIN;
+    if (x == nullptr) return INT_MIN;
     if (x->value >= v)
         return pre(x->lch, v);
     else
@@ -158,7 +206,7 @@ int SBT::pre(TreeLink &x, int v) {
 }
 
 int SBT::suc(TreeLink &x, int v) {
-    if (x == zero) return INT_MAX;
+    if (x == nullptr) return INT_MAX;
     if (x->value <= v)
         return suc(x->rch, v);
     else
@@ -166,7 +214,7 @@ int SBT::suc(TreeLink &x, int v) {
 }
 
 void SBT::rel(TreeLink &x) {
-    if (x == zero)
+    if (x == nullptr)
         return;
     rel(x->lch);
     rel(x->rch);

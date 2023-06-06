@@ -11,27 +11,30 @@
 #include "algorithm"
 #include <climits>
 
+typedef struct retdata {
+    int cnt, value;
+} retdata;
+
 class SBT {
     public:
         SBT();
         ~SBT();
         TreeLink root;
-        TreeLink zero;
-        TreeLink newnode(int v);                        //新建节点
-        int del(TreeLink &x, int v);                    //删除
-        void ins(TreeLink &x, int v);                   //插入
-        TreeLink fnd(TreeLink &x, int v);               //查找
-        int rank(TreeLink &x, int v);                   //排名
+        TreeLink newnode(int v);                        //creat new node
+        int del(TreeLink &x, int v);                    //delete node
+        TreeLink ins(TreeLink &x, int v);               //insert node
+        TreeLink fnd(TreeLink &x, int v);               //find node
+        int rank(TreeLink &x, int v);                   //find node of x rank
         int sel(TreeLink &x, int v);
         int pre(TreeLink &x, int v);
         int suc(TreeLink &x, int v);
+        void rel(TreeLink &x);                          //reset the SBT
     private:
         static void LeftRotate(TreeLink &x);            //左旋
         static void RightRotate(TreeLink &x);           //右旋
         void maintain(TreeLink &x, bool t);             //维持
-        void insrt(TreeLink &x, int v);                 //破坏树结构的插入
-        int delet(TreeLink &x, int v);                  //破坏树结构的删除
-        void rel(TreeLink &x);                          //清空节点
+        TreeLink insrt(TreeLink &x, int v);             //破坏树结构的插入
+        retdata delet(TreeLink &x, int v);              //破坏树结构的删除
 };
 
 
