@@ -6,7 +6,7 @@
 #define KNIGHT_MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,6 +22,10 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QLabel *msglabel;
+    void iniUI();                   // initialize UI
+    void iniGuiBoard();             // initialize GuiBoard
+    int width;
 };
 
 
