@@ -295,6 +295,7 @@ void BST::del() {
 void BST::reset() {
     SBTtree.rel(SBTtree.root);
     SBTtree.root = nullptr;
+    rltLabel->setText("reset");
     SetPaint();
 }
 
