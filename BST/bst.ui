@@ -14,7 +14,7 @@
    <string>平衡树</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_5">
+   <layout class="QHBoxLayout" name="horizontalLayout_6">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -48,6 +48,29 @@
           <widget class="QRadioButton" name="isTreap">
            <property name="text">
             <string>Treap</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>选择操作对象</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QRadioButton" name="isLeft">
+           <property name="text">
+            <string>左树</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="isRight">
+           <property name="text">
+            <string>右树</string>
            </property>
           </widget>
          </item>

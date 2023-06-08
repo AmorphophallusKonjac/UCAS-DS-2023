@@ -97,11 +97,15 @@ void BST::iniUI() {
     // connect inputNumber to value
     connect(ui->inputNumber, SIGNAL(textChanged(QString)), this, SLOT(UpdateValue()));
 
-    //connect fnd ins del
+    // connect fnd ins del
     connect(ui->isfind, SIGNAL(clicked(bool)), this, SLOT(fnd()));
     connect(ui->isdelete, SIGNAL(clicked(bool)), this, SLOT(del()));
     connect(ui->isinsert, SIGNAL(clicked(bool)), this, SLOT(ins()));
     connect(ui->isreset, SIGNAL(clicked(bool)), this, SLOT(reset()));
+
+    // set isLeft and isRight disable
+    ui->isLeft->setDisabled(true);
+    ui->isRight->setDisabled(true);
 }
 
 void BST::SetPaint() {

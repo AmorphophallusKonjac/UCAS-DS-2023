@@ -21,23 +21,26 @@ class SBT {
         ~SBT();
         TreeLink root;
         bool isSplit;
-        TreeLink newnode(int v);                        //creat new node
-        int del(TreeLink &x, int v);                    //delete node
-        TreeLink ins(TreeLink &x, int v);               //insert node
-        TreeLink fnd(TreeLink &x, int v);               //find node
-        int rank(TreeLink &x, int v);                   //find node of x rank
+        TreeLink newnode(int v);                        // creat new node
+        int del(TreeLink &x, int v);                    // delete node
+        TreeLink ins(TreeLink &x, int v);               // insert node
+        TreeLink fnd(TreeLink &x, int v);               // find node
+        int rank(TreeLink &x, int v);                   // find node of x rank
         int sel(TreeLink &x, int v);
         int pre(TreeLink &x, int v);
         int suc(TreeLink &x, int v);
-        void rel(TreeLink &x);                          //reset the SBT
-        void split(TreeLink &x, int v);
-        void merge(TreeLink &x, TreeLink &y, TreeLink &z);
+        void rel(TreeLink &x);                          // reset the SBT
+        void split(int v);
+        void merge(int v);
 private:
-        static void LeftRotate(TreeLink &x);            //左旋
-        static void RightRotate(TreeLink &x);           //右旋
-        void maintain(TreeLink &x, bool t);             //维持
-        TreeLink insrt(TreeLink &x, int v);             //破坏树结构的插入
-        retdata delet(TreeLink &x, int v);              //破坏树结构的删除
+        static void LeftRotate(TreeLink &x);                                // 左旋
+        static void RightRotate(TreeLink &x);                               // 右旋
+        void maintain(TreeLink &x, bool t);                                 // 维持
+        TreeLink insrt(TreeLink &x, int v);                                 // 破坏树结构的插入
+        retdata delet(TreeLink &x, int v);                                  // 破坏树结构的删除
+        void Split_Tree(TreeLink x, TreeLink &y, TreeLink &z, int v);       // 分裂树
+        void Tree2List(TreeLink x, retdata *a, int &i);
+        TreeLink List2Tree(retdata *a, int l, int r);
 };
 
 

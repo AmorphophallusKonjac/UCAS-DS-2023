@@ -2,6 +2,7 @@
 // Created by wangm on 2023/6/4.
 //
 
+#include <cstring>
 #include "SBT.h"
 
 SBT::SBT() {
@@ -85,8 +86,7 @@ void SBT::maintain(TreeLink &x, bool t) {
 }
 
 TreeLink SBT::newnode(int v) {
-    TreeLink p;
-    p = (TreeLink)malloc(sizeof(TreeNode));
+    auto p = (TreeLink)malloc(sizeof(TreeNode));
     p->lch = nullptr;
     p->rch = nullptr;
     p->cnt = 1;
@@ -222,6 +222,80 @@ void SBT::rel(TreeLink &x) {
     free(x);
 }
 
-void SBT::split(TreeLink &x, int v) {
+void SBT::split(int v) {
+    isSplit = true;
+    auto p = newnode(0);
+    Split_Tree(root, p->lch, p->rch, v);
+    root = p;
+}
 
+void SBT::Split_Tree(TreeLink x, TreeLink &y, TreeLink &z, int v) {
+    if (x == nullptr)
+        return;
+    if (x->value <= v) {
+        y = x;
+        y->rch = nullptr;
+        Split_Tree(x->rch, y->rch, z, v);
+    }
+    else {
+        z = x;
+        z->lch = nullptr;
+        Split_Tree(x->lch, y, z->lch, v);
+    }
+}
+
+void SBT::merge(int v) {
+    isSplit = false;
+    TreeLink p = nullptr;
+    retdata a[100], b[100], c[200];
+    int alen = 0, blen = 0, clen = 0;
+    memset(a, 0, sizeof a);
+    memset(b, 0, sizeof b);
+    Tree2List(root->lch, a, alen);
+    Tree2List(root->rch, b, blen);
+    for (int i = 0, j = 0; i < alen || j < blen; ) {
+        if (i == alen) {
+            c[clen++] = b[j++];
+            continue;
+        }
+        if (j == blen) {
+            c[clen++] = a[i++];
+            continue;
+        }
+        if (a[i].value == b[j].value) {
+            c[clen++] = {a[i].cnt + b[j].cnt, a[i].value};
+            ++i; ++j;
+            continue;
+        }
+        if (a[i].value < b[j].value) {
+            c[clen++] = a[i++];
+            continue;
+        }
+        if (a[i].value > b[j].value) {
+            c[clen++] = b[j++];
+            continue;
+        }
+    }
+    root = List2Tree(c, 0, clen);
+}
+
+void SBT::Tree2List(TreeLink x, retdata *a, int &i) {
+    if (x == nullptr)
+        return;
+    Tree2List(x->lch, a, i);
+    a[i++] = {x->cnt, x->value};
+    Tree2List(x->rch, a, i);
+    free(x);
+}
+
+TreeLink SBT::List2Tree(retdata *a, int l, int r) {
+    int mid = (l + r) / 2;
+    if (l >= r)
+        return nullptr;
+    auto p = newnode(a[mid].value);
+    p->cnt = a[mid].cnt;
+    p->lch = List2Tree(a, l, mid);
+    p->rch = List2Tree(a, mid + 1, r);
+    p->size = ((p->lch != nullptr) ? p->lch->size : 0) + 1 + ((p->rch != nullptr) ? p->rch->size : 0);
+    return p;
 }
