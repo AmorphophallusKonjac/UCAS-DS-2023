@@ -217,6 +217,7 @@ void BST::GenScene(TreeLink x, QGraphicsScene *scene) {
     font.setPointSize(textHeight);
     data->setFont(font);
     data->setPos(x->x, x->y);
+    data->setDefaultTextColor(Qt::white);
     scene->addItem(data);
 
     if (x->lch != nullptr) {
@@ -492,7 +493,7 @@ void BST::GenTitle(TreeLink x, QGraphicsScene *scene) {
         textr->setPos(x->lch->x + 15 + (x->lch->rch != nullptr ? x->lch->rch->width + NodeWidth : 80), x->lch->y - 3 * textHeight);
     }
     else if (x->lch == nullptr && x->rch != nullptr) {
-        textl->setPos(x->lch->x + 15 - (x->rch->lch != nullptr ? x->rch->lch->width + NodeWidth : 80), x->rch->y - 3 * textHeight);
+        textl->setPos(x->rch->x + 15 - (x->rch->lch != nullptr ? x->rch->lch->width + NodeWidth : 80), x->rch->y - 3 * textHeight);
         textr->setPos(x->rch->x + 15, x->rch->y - 3 * textHeight);
     }
     else {
