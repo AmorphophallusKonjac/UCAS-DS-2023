@@ -6,6 +6,7 @@
 
 SBT::SBT() {
     root = nullptr;
+    isSplit = false;
 }
 
 SBT::~SBT() {
@@ -219,4 +220,8 @@ void SBT::rel(TreeLink &x) {
     rel(x->lch);
     rel(x->rch);
     free(x);
+}
+
+void SBT::split(TreeLink &x, int v) {
+
 }
