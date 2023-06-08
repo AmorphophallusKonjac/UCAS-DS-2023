@@ -25,12 +25,15 @@ public:
 
     SBT SBTtree;
     int value;
+    int Splited;
 public slots:
     void fnd();
     void ins();
     void del();
     void UpdateValue();
     void reset();
+    void split();
+    void merge();
 private:
     Ui::BST *ui;
     QLabel *msgLabel;
@@ -39,6 +42,7 @@ private:
     void SetPaint();
     int BSTtype;                                                        //平衡树类型
     TreeLink SelectedNode;
+    int SelectedTree;
     TreeLink SBT_SelectedNode;
     TreeLink Splay_SelectedNode;
     TreeLink AVL_SelectedNode;
@@ -52,8 +56,8 @@ private:
     void CalcPos(TreeLink t, double x, double y);
     void GenScene(TreeLink x, QGraphicsScene *scene);
     void PaintTree(TreeLink x, QGraphicsScene *scene);
-
     void wheelEvent(QWheelEvent *event) override;
+    void GenTitle(TreeLink x, QGraphicsScene *scene);
 };
 
 

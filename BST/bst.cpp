@@ -57,11 +57,12 @@ void BST::iniUI() {
     // initial rtlLabel to welcome
     rltLabel->setText("Welcome!");
 
-    // connect radiobutton to painter
+    // connect type radiobutton to painter
     connect(ui->isSplay, &QRadioButton::toggled, [=](bool isChecked){
         if (isChecked) {
             msgLabel->setText("BST type: Splay");
             BSTtype = 0;
+            SelectedNode = Splay_SelectedNode;
             SetPaint();
         }
     });
@@ -69,6 +70,7 @@ void BST::iniUI() {
         if (isChecked) {
             msgLabel->setText("BST type: SBT");
             BSTtype = 1;
+            SelectedNode = SBT_SelectedNode;
             SetPaint();
         }
     });
@@ -76,6 +78,7 @@ void BST::iniUI() {
         if (isChecked) {
             msgLabel->setText("BST type: AVL");
             BSTtype = 2;
+            SelectedNode = AVL_SelectedNode;
             SetPaint();
         }
 
@@ -84,7 +87,21 @@ void BST::iniUI() {
         if (isChecked) {
             msgLabel->setText("BST type: Treap");
             BSTtype = 3;
+            SelectedNode = Treap_SelectedNode;
             SetPaint();
+        }
+    });
+
+    // connect select radiobutton to painter
+    connect(ui->isLeft, &QRadioButton::toggled, [=](bool isChecked){
+        if (isChecked) {
+            SelectedTree = 0;
+        }
+    });
+
+    connect(ui->isRight, &QRadioButton::toggled, [=](bool isChecked){
+        if (isChecked) {
+            SelectedTree = 1;
         }
     });
 
@@ -94,18 +111,32 @@ void BST::iniUI() {
     // set inputNumber placeholder text
     ui->inputNumber->setPlaceholderText("input argument");
 
+    // set clear button
+    ui->inputNumber->setClearButtonEnabled(true);
+
     // connect inputNumber to value
     connect(ui->inputNumber, SIGNAL(textChanged(QString)), this, SLOT(UpdateValue()));
 
-    // connect fnd ins del
+    // connect fnd ins del split merge
     connect(ui->isfind, SIGNAL(clicked(bool)), this, SLOT(fnd()));
     connect(ui->isdelete, SIGNAL(clicked(bool)), this, SLOT(del()));
     connect(ui->isinsert, SIGNAL(clicked(bool)), this, SLOT(ins()));
     connect(ui->isreset, SIGNAL(clicked(bool)), this, SLOT(reset()));
+    connect(ui->issplit, SIGNAL(clicked(bool)), this, SLOT(split()));
+    connect(ui->ismerge, SIGNAL(clicked(bool)), this, SLOT(merge()));
 
     // set isLeft and isRight disable
+    ui->isLeft->setChecked(false);
+    ui->isRight->setChecked(false);
     ui->isLeft->setDisabled(true);
     ui->isRight->setDisabled(true);
+
+    // set ismerge disable
+    ui->ismerge->setDisabled(true);
+
+    // set SelectNode and SelectTree
+    SelectedTree = 2;
+    SelectedNode = nullptr;
 }
 
 void BST::SetPaint() {
@@ -206,11 +237,34 @@ void BST::PaintTree(TreeLink x, QGraphicsScene *scene) {
     if (x == nullptr) return;
     CalcWidth(x);
     CalcPos(x, 0, 0);
-    GenScene(x, scene);
+    if (Splited) {
+        GenTitle(x, scene);
+        GenScene(x->lch, scene);
+        GenScene(x->rch, scene);
+    }
+    else
+        GenScene(x, scene);
 }
 
 void BST::fnd() {
-    SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
+    if (ui->inputNumber->text() == "") {
+        rltLabel->setText("Please enter argument");
+        SetPaint();
+        return;
+    }
+    switch (SelectedTree) {
+        case 0:
+            SBT_SelectedNode = SBTtree.fnd(SBTtree.root->lch, value);
+            break;
+        case 1:
+            SBT_SelectedNode = SBTtree.fnd(SBTtree.root->rch, value);
+            break;
+        case 2:
+            SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
+            break;
+        default:
+            SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
+    }
     switch (BSTtype) {
         case 0:
             //scene->addText("This is Splay");
@@ -229,14 +283,36 @@ void BST::fnd() {
     QString st;
     st.setNum(value);
     if (SelectedNode == nullptr)
-        rltLabel->setText(st + " not found");
+        st = st + " not found";
     else
-        rltLabel->setText(st + " found");
+        st = st + " found";
+    if (SelectedTree == 0)
+        st = st + " in left tree";
+    if (SelectedTree == 1)
+        st = st + " in right tree";
+    rltLabel->setText(st);
     SetPaint();
 }
 
 void BST::ins() {
-    SBT_SelectedNode = SBTtree.ins(SBTtree.root, value);
+    if (ui->inputNumber->text() == "") {
+        rltLabel->setText("Please enter argument");
+        SetPaint();
+        return;
+    }
+    switch (SelectedTree) {
+        case 0:
+            SBT_SelectedNode = SBTtree.ins(SBTtree.root->lch, value);
+            break;
+        case 1:
+            SBT_SelectedNode = SBTtree.ins(SBTtree.root->rch, value);
+            break;
+        case 2:
+            SBT_SelectedNode = SBTtree.ins(SBTtree.root, value);
+            break;
+        default:
+            SBT_SelectedNode = SBTtree.ins(SBTtree.root, value);
+    }
     switch (BSTtype) {
         case 0:
             //scene->addText("This is Splay");
@@ -254,16 +330,41 @@ void BST::ins() {
     }
     QString st;
     st.setNum(value);
-    rltLabel->setText(st + " inserted");
+    st = st + " inserted";
+    if (SelectedTree == 0)
+        st = st + " in left tree";
+    if (SelectedTree == 1)
+        st = st + " in right tree";
+    rltLabel->setText(st);
     SetPaint();
 }
 
 void BST::del() {
+    if (ui->inputNumber->text() == "") {
+        rltLabel->setText("Please enter argument");
+        SetPaint();
+        return;
+    }
     QString st;
     st.setNum(value);
     int flag, SBT_flag;
-    SBT_flag = SBTtree.del(SBTtree.root, value);
-    SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
+    switch (SelectedTree) {
+        case 0:
+            SBT_flag = SBTtree.del(SBTtree.root->lch, value);
+            SBT_SelectedNode = SBTtree.fnd(SBTtree.root->lch, value);
+            break;
+        case 1:
+            SBT_flag = SBTtree.del(SBTtree.root->rch, value);
+            SBT_SelectedNode = SBTtree.fnd(SBTtree.root->rch, value);
+            break;
+        case 2:
+            SBT_flag = SBTtree.del(SBTtree.root, value);
+            SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
+            break;
+        default:
+            SBT_flag = SBTtree.del(SBTtree.root->lch, value);
+            SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
+    }
     switch (BSTtype) {
         case 0:
             //scene->addText("This is Splay");
@@ -282,21 +383,37 @@ void BST::del() {
     }
     switch (flag) {
         case 0:
-            rltLabel->setText(st + " not found");
+            st = st + " not found";
             break;
         case 1:
-            rltLabel->setText(st + " deleted and still left");
+            st = st + " deleted and still left";
             break;
         case 2:
-            rltLabel->setText(st + " deleted");
+            st = st + " deleted";
             break;
         default:
-            rltLabel->setText("del is wrong");
+            st = st + "del is wrong";
     }
+    if (SelectedTree == 0)
+        st = st + " in left tree";
+    if (SelectedTree == 1)
+        st = st + " in right tree";
+    rltLabel->setText(st);
     SetPaint();
 }
 
 void BST::reset() {
+    ui->isRight->setChecked(false);
+    ui->isLeft->setChecked(false);
+    ui->isRight->setDisabled(true);
+    ui->isLeft->setDisabled(true);
+    ui->issplit->setDisabled(false);
+    ui->ismerge->setDisabled(true);
+    ui->inputNumber->clear();
+    SelectedTree = 2;
+    SelectedNode = nullptr;
+    Splited = 0;
+
     SBTtree.rel(SBTtree.root);
     SBTtree.root = nullptr;
     rltLabel->setText("reset");
@@ -312,4 +429,76 @@ void BST::wheelEvent(QWheelEvent *event)
     int wheelValue = event->angleDelta().y();
     double ratio = (double)wheelValue / (double)1200 + 1;
     ui->PaintTree->scale(ratio, ratio);
+}
+
+void BST::split() {
+    if (ui->inputNumber->text() == "") {
+        rltLabel->setText("Please enter argument");
+        SetPaint();
+        return;
+    }
+    Splited = 1;
+    ui->issplit->setDisabled(true);
+    ui->ismerge->setDisabled(false);
+    ui->isLeft->setDisabled(false);
+    ui->isLeft->setChecked(true);
+    ui->isRight->setDisabled(false);
+    ui->isRight->setChecked(false);
+    SBTtree.split(value);
+    SelectedTree = 0;
+    rltLabel->setText("split complete");
+    SelectedNode = nullptr;
+    SetPaint();
+}
+
+void BST::merge() {
+    Splited = 0;
+    ui->isLeft->setChecked(false);
+    ui->isRight->setChecked(false);
+    ui->isLeft->setDisabled(true);
+    ui->isRight->setDisabled(true);
+    ui->ismerge->setDisabled(true);
+    ui->issplit->setDisabled(false);
+    SBTtree.merge();
+    SelectedTree = 2;
+    rltLabel->setText("merge complete");
+    SelectedNode = nullptr;
+    SetPaint();
+}
+
+void BST::GenTitle(TreeLink x, QGraphicsScene *scene) {
+    auto *textl = new QGraphicsTextItem;
+    auto *textr = new QGraphicsTextItem;
+    auto *stl = new QString;
+    auto *str = new QString;
+    *str = "右树";
+    *stl = "左树";
+    textl->setPlainText(*stl);
+    textr->setPlainText(*str);
+    QFont fontl = textl->font();
+    fontl.setPointSize(textHeight);
+    textl->setFont(fontl);
+    QFont fontr = textr->font();
+    fontr.setPointSize(textHeight);
+    textr->setFont(fontr);
+    textl->setDefaultTextColor(Qt::black);
+    textr->setDefaultTextColor(Qt::black);
+    if (x->lch != nullptr && x->rch != nullptr) {
+        textl->setPos(x->lch->x + 15, x->lch->y - 3 * textHeight);
+        textr->setPos(x->rch->x + 15, x->rch->y - 3 * textHeight);
+    }
+    else if (x->lch != nullptr && x->rch == nullptr) {
+        textl->setPos(x->lch->x + 15, x->lch->y - 3 * textHeight);
+        textr->setPos(x->lch->x + 15 + (x->lch->rch != nullptr ? x->lch->rch->width + NodeWidth : 80), x->lch->y - 3 * textHeight);
+    }
+    else if (x->lch == nullptr && x->rch != nullptr) {
+        textl->setPos(x->lch->x + 15 - (x->rch->lch != nullptr ? x->rch->lch->width + NodeWidth : 80), x->rch->y - 3 * textHeight);
+        textr->setPos(x->rch->x + 15, x->rch->y - 3 * textHeight);
+    }
+    else {
+        textl->setPos(0, 0);
+        textr->setPos(80, 0);
+    }
+    scene->addItem(textl);
+    scene->addItem(textr);
 }

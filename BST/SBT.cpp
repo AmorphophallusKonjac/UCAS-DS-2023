@@ -7,7 +7,6 @@
 
 SBT::SBT() {
     root = nullptr;
-    isSplit = false;
 }
 
 SBT::~SBT() {
@@ -96,7 +95,7 @@ TreeLink SBT::newnode(int v) {
 }
 
 TreeLink SBT::ins(TreeLink &x, int v) {
-    TreeLink p = fnd(root, v);
+    TreeLink p = fnd(x, v);
     if (p == nullptr)
         p = insrt(x, v);
     else
@@ -223,30 +222,29 @@ void SBT::rel(TreeLink &x) {
 }
 
 void SBT::split(int v) {
-    isSplit = true;
     auto p = newnode(0);
     Split_Tree(root, p->lch, p->rch, v);
     root = p;
 }
 
 void SBT::Split_Tree(TreeLink x, TreeLink &y, TreeLink &z, int v) {
-    if (x == nullptr)
+    if (x == nullptr) {
+        y = nullptr; z = nullptr;
         return;
+    }
     if (x->value <= v) {
         y = x;
-        y->rch = nullptr;
+        z = nullptr;
         Split_Tree(x->rch, y->rch, z, v);
     }
     else {
         z = x;
-        z->lch = nullptr;
+        y = nullptr;
         Split_Tree(x->lch, y, z->lch, v);
     }
 }
 
-void SBT::merge(int v) {
-    isSplit = false;
-    TreeLink p = nullptr;
+void SBT::merge() {
     retdata a[100], b[100], c[200];
     int alen = 0, blen = 0, clen = 0;
     memset(a, 0, sizeof a);

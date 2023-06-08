@@ -20,7 +20,6 @@ class SBT {
         SBT();
         ~SBT();
         TreeLink root;
-        bool isSplit;
         TreeLink newnode(int v);                        // creat new node
         int del(TreeLink &x, int v);                    // delete node
         TreeLink ins(TreeLink &x, int v);               // insert node
@@ -31,7 +30,7 @@ class SBT {
         int suc(TreeLink &x, int v);
         void rel(TreeLink &x);                          // reset the SBT
         void split(int v);
-        void merge(int v);
+        void merge();
 private:
         static void LeftRotate(TreeLink &x);                                // 左旋
         static void RightRotate(TreeLink &x);                               // 右旋
