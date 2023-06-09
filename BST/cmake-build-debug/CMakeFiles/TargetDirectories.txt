@@ -1,4 +1,0 @@
-C:/Users/wangm/Desktop/UCAS-DS-2023/UCAS-DS-2023/BST/cmake-build-debug/CMakeFiles/BST.dir
-C:/Users/wangm/Desktop/UCAS-DS-2023/UCAS-DS-2023/BST/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/wangm/Desktop/UCAS-DS-2023/UCAS-DS-2023/BST/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-C:/Users/wangm/Desktop/UCAS-DS-2023/UCAS-DS-2023/BST/cmake-build-debug/CMakeFiles/BST_autogen.dir

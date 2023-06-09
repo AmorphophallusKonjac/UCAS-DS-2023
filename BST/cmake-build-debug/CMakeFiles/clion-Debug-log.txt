@@ -1,5 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2023.1.3\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" -S C:\Users\wangm\Desktop\UCAS-DS-2023\UCAS-DS-2023\BST -B C:\Users\wangm\Desktop\UCAS-DS-2023\UCAS-DS-2023\BST\cmake-build-debug
--- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
--- Configuring done
--- Generating done
--- Build files have been written to: C:/Users/wangm/Desktop/UCAS-DS-2023/UCAS-DS-2023/BST/cmake-build-debug
