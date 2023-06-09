@@ -2,18 +2,20 @@
 // Created by hp on 2023/6/7.
 //
 
+
+#ifndef BST_SPLAY_H
+#define BST_SPLAY_H
+#define MAXN 100
+
 #include <iostream>
 #include <cstring>
 #include <cstdio>
 #include "node.h"
 
-#ifndef BST_SPLAY_H
-#define BST_SPLAY_H
-#define MAXN 1000010
-
-
 class Splay_Tree {
 public:
+    Splay_Tree();
+    ~Splay_Tree();
     TreeLink Root;
     int isSplit;
     void insert(TreeLink &p, int x);

@@ -9,6 +9,8 @@
 #include <QLabel>
 #include <QGraphicsScene>
 #include "SBT.h"
+#include "Splay.h"
+#include "Treap.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -24,6 +26,8 @@ public:
     ~BST() override;
 
     SBT SBTtree;
+    Splay_Tree Splaytree;
+    TREAP Treaptree;
     int value;
     int Splited;
 public slots:
@@ -57,7 +61,10 @@ private:
     void GenScene(TreeLink x, QGraphicsScene *scene);
     void PaintTree(TreeLink x, QGraphicsScene *scene);
     void wheelEvent(QWheelEvent *event) override;
-    void GenTitle(TreeLink x, QGraphicsScene *scene);
+    void GenTitle(TreeLink x, QGraphicsScene *scene) const;
+    void selectNode();
+    int flag, SBT_flag, Splay_flag, AVL_flag, Treap_flag;
+    void selectFlag();
 };
 
 

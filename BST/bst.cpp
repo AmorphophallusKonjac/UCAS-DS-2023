@@ -137,14 +137,19 @@ void BST::iniUI() {
     // set SelectNode and SelectTree
     SelectedTree = 2;
     SelectedNode = nullptr;
+
+    // set splited 0
+    Splited = 0;
 }
 
 void BST::SetPaint() {
+    delete ui->PaintTree->scene();
     auto *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::white);
     switch (BSTtype) {
         case 0:
             scene->addText("This is Splay");
+            PaintTree(Splaytree.Root, scene);
             break;
         case 1:
             //scene->addText("This is SBT");
@@ -256,31 +261,25 @@ void BST::fnd() {
     switch (SelectedTree) {
         case 0:
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root->lch, value);
+
+            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->lch, value) ? Splaytree.Root->lch : nullptr;
             break;
         case 1:
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root->rch, value);
+
+            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->rch, value) ? Splaytree.Root->rch : nullptr;
             break;
         case 2:
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
+
+            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root, value) ? Splaytree.Root : nullptr;
             break;
         default:
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
+
+            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root, value) ? Splaytree.Root : nullptr;
     }
-    switch (BSTtype) {
-        case 0:
-            //scene->addText("This is Splay");
-            break;
-        case 1:
-            //scene->addText("This is SBT");
-            SelectedNode = SBT_SelectedNode;
-            break;
-        case 2:
-            //scene->addText("This is AVL");
-            break;
-        case 3:
-            //scene->addText("This is Treap");
-            break;
-    }
+    selectNode();
     QString st;
     st.setNum(value);
     if (SelectedNode == nullptr)
@@ -304,31 +303,29 @@ void BST::ins() {
     switch (SelectedTree) {
         case 0:
             SBT_SelectedNode = SBTtree.ins(SBTtree.root->lch, value);
+
+            Splaytree.insert(Splaytree.Root->lch, value);
+            Splay_SelectedNode = Splaytree.Root->lch;
             break;
         case 1:
             SBT_SelectedNode = SBTtree.ins(SBTtree.root->rch, value);
+
+            Splaytree.insert(Splaytree.Root->rch, value);
+            Splay_SelectedNode = Splaytree.Root->rch;
             break;
         case 2:
             SBT_SelectedNode = SBTtree.ins(SBTtree.root, value);
+
+            Splaytree.insert(Splaytree.Root, value);
+            Splay_SelectedNode = Splaytree.Root;
             break;
         default:
             SBT_SelectedNode = SBTtree.ins(SBTtree.root, value);
+
+            Splaytree.insert(Splaytree.Root, value);
+            Splay_SelectedNode = Splaytree.Root;
     }
-    switch (BSTtype) {
-        case 0:
-            //scene->addText("This is Splay");
-            break;
-        case 1:
-            //scene->addText("This is SBT");
-            SelectedNode = SBT_SelectedNode;
-            break;
-        case 2:
-            //scene->addText("This is AVL");
-            break;
-        case 3:
-            //scene->addText("This is Treap");
-            break;
-    }
+    selectNode();
     QString st;
     st.setNum(value);
     st = st + " inserted";
@@ -348,40 +345,37 @@ void BST::del() {
     }
     QString st;
     st.setNum(value);
-    int flag, SBT_flag;
     switch (SelectedTree) {
         case 0:
             SBT_flag = SBTtree.del(SBTtree.root->lch, value);
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root->lch, value);
+
+            Splay_flag = Splaytree.del(Splaytree.Root->lch, value);
+            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->lch, value) ? Splaytree.Root->lch : nullptr;
             break;
         case 1:
             SBT_flag = SBTtree.del(SBTtree.root->rch, value);
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root->rch, value);
+
+            Splay_flag = Splaytree.del(Splaytree.Root->rch, value);
+            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->rch, value) ? Splaytree.Root->rch : nullptr;
             break;
         case 2:
             SBT_flag = SBTtree.del(SBTtree.root, value);
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
+
+            Splay_flag = Splaytree.del(Splaytree.Root, value);
+            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root, value) ? Splaytree.Root : nullptr;
             break;
         default:
             SBT_flag = SBTtree.del(SBTtree.root->lch, value);
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
+
+            Splay_flag = Splaytree.del(Splaytree.Root, value);
+            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root, value) ? Splaytree.Root : nullptr;
     }
-    switch (BSTtype) {
-        case 0:
-            //scene->addText("This is Splay");
-            break;
-        case 1:
-            //scene->addText("This is SBT");
-            flag = SBT_flag;
-            SelectedNode = SBT_SelectedNode;
-            break;
-        case 2:
-            //scene->addText("This is AVL");
-            break;
-        case 3:
-            //scene->addText("This is Treap");
-            break;
-    }
+    selectNode();
+    selectFlag();
     switch (flag) {
         case 0:
             st = st + " not found";
@@ -417,6 +411,10 @@ void BST::reset() {
 
     SBTtree.rel(SBTtree.root);
     SBTtree.root = nullptr;
+    Splaytree.rel(Splaytree.Root);
+    Splaytree.Root = nullptr;
+    Treaptree.rel(Treaptree.Root);
+    Treaptree.Root = nullptr;
     rltLabel->setText("reset");
     SetPaint();
 }
@@ -446,6 +444,10 @@ void BST::split() {
     ui->isRight->setDisabled(false);
     ui->isRight->setChecked(false);
     SBTtree.split(value);
+    SBT_SelectedNode = nullptr;
+    Splaytree.split(value);
+    Splay_SelectedNode = nullptr;
+    //Treaptree.split(value);
     SelectedTree = 0;
     rltLabel->setText("split complete");
     SelectedNode = nullptr;
@@ -461,13 +463,17 @@ void BST::merge() {
     ui->ismerge->setDisabled(true);
     ui->issplit->setDisabled(false);
     SBTtree.merge();
+    SBT_SelectedNode = nullptr;
+    Splaytree.merge();
+    Splay_SelectedNode = nullptr;
+    //Treaptree.merge();
     SelectedTree = 2;
     rltLabel->setText("merge complete");
     SelectedNode = nullptr;
     SetPaint();
 }
 
-void BST::GenTitle(TreeLink x, QGraphicsScene *scene) {
+void BST::GenTitle(TreeLink x, QGraphicsScene *scene) const {
     auto *textl = new QGraphicsTextItem;
     auto *textr = new QGraphicsTextItem;
     auto *stl = new QString;
@@ -502,4 +508,46 @@ void BST::GenTitle(TreeLink x, QGraphicsScene *scene) {
     }
     scene->addItem(textl);
     scene->addItem(textr);
+}
+
+void BST::selectNode() {
+    switch (BSTtype) {
+        case 0:
+            //scene->addText("This is Splay");
+            SelectedNode = Splay_SelectedNode;
+            break;
+        case 1:
+            //scene->addText("This is SBT");
+            SelectedNode = SBT_SelectedNode;
+            break;
+        case 2:
+            //scene->addText("This is AVL");
+            SelectedNode = AVL_SelectedNode;
+            break;
+        case 3:
+            //scene->addText("This is Treap");
+            SelectedNode = Treap_SelectedNode;
+            break;
+    }
+}
+
+void BST::selectFlag() {
+    switch (BSTtype) {
+        case 0:
+            //scene->addText("This is Splay");
+            flag = Splay_flag;
+            break;
+        case 1:
+            //scene->addText("This is SBT");
+            flag = SBT_flag;
+            break;
+        case 2:
+            //scene->addText("This is AVL");
+            flag = AVL_flag;
+            break;
+        case 3:
+            //scene->addText("This is Treap");
+            flag = Treap_flag;
+            break;
+    }
 }

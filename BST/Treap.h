@@ -2,18 +2,21 @@
 // Created by hp on 2023/6/8.
 //
 
+
+#ifndef BST_TREAP_H
+#define BST_TREAP_H
+#define MAXN 100
+
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
 #include "node.h"
 
-#ifndef BST_SPLAY_H
-#define BST_SPLAY_H
-#define MAXN 1000010
-
 class TREAP {
 public:
+    TREAP();
+    ~TREAP();
     TreeLink Root;
     int isSplit;
     void insert(TreeLink &p, int x);

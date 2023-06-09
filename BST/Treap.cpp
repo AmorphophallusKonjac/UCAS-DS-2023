@@ -169,8 +169,19 @@ void TREAP::merge(){
 }
 
 void TREAP::rel(TreeLink &p) {
+    if (p == nullptr) return;
     if(p->lch) rel(p->lch);
     if(p->rch) rel(p->rch);
     free(p);
     p= nullptr;
+}
+
+TREAP::TREAP() {
+    Root = nullptr;
+    isSplit = 0;
+}
+
+TREAP::~TREAP() {
+    rel(Root);
+    Root = nullptr;
 }

@@ -228,8 +228,19 @@ void Splay_Tree::split(int x){
 }
 
 void Splay_Tree::rel(TreeLink &p) {
+    if (p == nullptr) return;
     if(p->lch) rel(p->lch);
     if(p->rch) rel(p->rch);
     free(p);
     p= nullptr;
+}
+
+Splay_Tree::Splay_Tree() {
+    Root = nullptr;
+    isSplit = 0;
+}
+
+Splay_Tree::~Splay_Tree() {
+    rel(Root);
+    Root = nullptr;
 }
