@@ -25,6 +25,7 @@ public:
     void split(int x);      //把两棵分裂的树作为一个虚根的左右子树
     void merge();       //把虚根的两棵子树合并
     TreeLink Build_Tree(TreeNode *t, int l, int r);
+    void rel(TreeLink &p);
 private:
     TreeNode temp1[MAXN], temp2[MAXN], temp3[MAXN];
     int temp_cnt[4];

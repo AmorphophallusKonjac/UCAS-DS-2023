@@ -226,3 +226,10 @@ void Splay_Tree::split(int x){
     push_up(Root);
     isSplit = 1;
 }
+
+void Splay_Tree::rel(TreeLink &p) {
+    if(p->lch) rel(p->lch);
+    if(p->rch) rel(p->rch);
+    free(p);
+    p= nullptr;
+}
