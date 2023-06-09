@@ -34,32 +34,33 @@ void Splay_Tree::insert(TreeLink &p, int x) {
     }
 }
 
-void Splay_Tree::del(TreeLink &p, int x) {
-    if(!find_rank(p, x)) return;
+int Splay_Tree::del(TreeLink &p, int x) {
+    if(!find_rank(p, x)) return 0;
     if(p->cnt > 1) {
         p->cnt--;
         push_up(p);
-        return;
+        return 1;
     }
     if(p->lch == nullptr && p->rch == nullptr){
         p = nullptr;
-        return;
+        return 2;
     }
     if(p->rch == nullptr){
         p = p->lch;
         p->father = nullptr;
-        return;
+        return 2;
     }
     if(p->lch == nullptr){
         p = p->rch;
         p->father = nullptr;
-        return;
+        return 2;
     }
     TreeLink left = find_pre(p);
     Splay(left);
     p->rch = p->rch->rch;
     p->rch->father = p;
     push_up(p);
+    return 2;
 }
 
 TreeLink Splay_Tree::find_pre(TreeLink p) {

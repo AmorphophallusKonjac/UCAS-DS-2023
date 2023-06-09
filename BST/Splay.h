@@ -17,7 +17,7 @@ public:
     TreeLink Root;
     int isSplit;
     void insert(TreeLink &p, int x);
-    void del(TreeLink &p, int x);
+    int del(TreeLink &p, int x);
     TreeLink find_pre(TreeLink p);
     TreeLink find_suf(TreeLink p);
     TreeLink find_kth(TreeLink p, int k);   //查找第k大的结点
