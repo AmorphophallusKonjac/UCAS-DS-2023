@@ -8,26 +8,26 @@ void Splay_Tree::insert(TreeLink &p, int x) {
     if(p == nullptr){
         p = (TreeLink)malloc(sizeof(TreeNode));
         p->lch = p->rch = p->father = nullptr;
-        p->key = x;
+        p->value = x;
         p->cnt = 1;
         return;
     }
     TreeLink now = p, fa = nullptr;
     while(1){
-        if(x == now->key){
+        if(x == now->value){
             now->cnt ++;
             Splay(now);
             return;
         }
         fa = now;
-        now = (x > now->key) ? now->rch : now->lch;
+        now = (x > now->value) ? now->rch : now->lch;
         if(now == nullptr) {
             now = (TreeLink)malloc(sizeof(TreeNode));
-            now->key = x;
+            now->value = x;
             now->cnt = 1;
             now->father = fa;
             now->lch = now->rch = nullptr;
-            if(x > fa->key) fa->rch = now;
+            if(x > fa->value) fa->rch = now;
             else fa->lch = now;
             Splay(now); return;
         }
@@ -91,10 +91,10 @@ int Splay_Tree::find_rank(TreeLink p, int x) {
     TreeLink now = p;
     int ans = 1;
     while(1) {
-        if(now->lch != nullptr && x < now->key) now = now->lch;
+        if(now->lch != nullptr && x < now->value) now = now->lch;
         else{
             ans += (now->lch) ? now->lch->size : 0;
-            if(x == now->key){ Splay(now); return ans; }
+            if(x == now->value){ Splay(now); return ans; }
             ans += now->cnt; now = now->rch;
         }
         if(now == nullptr) return 0;
@@ -155,7 +155,7 @@ TreeLink Splay_Tree::Build_Tree(TreeNode *t, int l, int r) {
     if(l > r) return nullptr;
     int mid = (l + r + 1) / 2;
     TreeLink newNode = (TreeLink)malloc(sizeof(TreeNode));
-    newNode->key = t[mid].key;
+    newNode->value = t[mid].value;
     newNode->cnt = t[mid].cnt;
     newNode->lch = newNode->rch = nullptr;
     if(l < mid) newNode->lch = Build_Tree(t, l, mid-1);
@@ -171,7 +171,7 @@ void Splay_Tree::merge(){
     Get_inorder_traversal(Root->rch, temp2, 2);
     int i = 1, j = 1;
     while(i <= temp_cnt[1] && j <= temp_cnt[2]){
-        if(temp1[i].key < temp2[j].key) {
+        if(temp1[i].value < temp2[j].value) {
             temp3[i + j - 1] = temp1[i]; ++i;
         }
         else {
@@ -185,7 +185,7 @@ void Splay_Tree::merge(){
         temp3[i + j - 1] = temp2[j]; ++j;
     }
     for(int i=1;i<=temp_cnt[1] + temp_cnt[2];++i)
-        printf("%d ",temp3[i].key);
+        printf("%d ",temp3[i].value);
     puts("");
     Root = Build_Tree(temp3, 1, temp_cnt[1] + temp_cnt[2]);
     isSplit = 0;
