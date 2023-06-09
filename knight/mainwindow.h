@@ -7,6 +7,9 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include <QGraphicsScene>
+#include <QGraphicsItem>
+#include "board.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,13 +22,21 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
     ~MainWindow() override;
-
+    board board;
+public slots:
+    void PrintResult();
+    void PrintProcess();
+    void Reset();
+    void UpdateX();
+    void UpdateY();
 private:
     Ui::MainWindow *ui;
     QLabel *msglabel;
     void iniUI();                   // initialize UI
     void iniGuiBoard();             // initialize GuiBoard
     int width;
+    void PrintGuiBoard(QGraphicsScene *scene) const;
+    void PrintGuiResult(QGraphicsScene *scene);
 };
 
 

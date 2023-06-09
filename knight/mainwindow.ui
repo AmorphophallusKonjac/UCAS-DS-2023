@@ -14,7 +14,7 @@
    <string>马踏棋盘</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="centralHLayout">
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -33,7 +33,11 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="inputX"/>
+            <widget class="QLineEdit" name="inputX">
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -47,12 +51,19 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="inputY"/>
+            <widget class="QLineEdit" name="inputY">
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
         </layout>
        </widget>
+      </item>
+      <item>
+       <widget class="QTextBrowser" name="msgdisplay"/>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -89,5 +100,54 @@
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>showResult</sender>
+   <signal>clicked()</signal>
+   <receiver>guiboard</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>108</x>
+     <y>452</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>353</x>
+     <y>368</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showProcess</sender>
+   <signal>clicked()</signal>
+   <receiver>guiboard</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>265</x>
+     <y>460</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>356</x>
+     <y>430</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>isreset</sender>
+   <signal>clicked()</signal>
+   <receiver>guiboard</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>230</x>
+     <y>491</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>384</x>
+     <y>476</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

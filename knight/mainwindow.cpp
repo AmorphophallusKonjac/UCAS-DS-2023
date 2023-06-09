@@ -6,7 +6,8 @@
 
 #include "mainwindow.h"
 #include "ui_MainWindow.h"
-#include <QGraphicsItem>
+#include "QRegularExpressionValidator"
+#include "QRegularExpression"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -33,10 +34,38 @@ void MainWindow::iniUI() {
     ui->statusbar->setStyleSheet(QString("QStatusBar::item{border: 0px}"));
     ui->guiboard->setRenderHint(QPainter::Antialiasing, true);
     iniGuiBoard();
+
+    // set input limit
+    ui->inputX->setValidator(new QRegularExpressionValidator(QRegularExpression("[0-7]")));
+    ui->inputY->setValidator(new QRegularExpressionValidator(QRegularExpression("[0-7]")));
+
+    // connect button
+    connect(ui->showResult, SIGNAL(clicked(bool)), this, SLOT(PrintResult()));
+    connect(ui->isreset, SIGNAL(clicked(bool)), this, SLOT(Reset()));
+    connect(ui->inputX, SIGNAL(textChanged(QString)), this, SLOT(UpdateX()));
+    connect(ui->inputY, SIGNAL(textChanged(QString)), this, SLOT(UpdateY()));
 }
 
 void MainWindow::iniGuiBoard() {
     auto *scene = new QGraphicsScene;
+    PrintGuiBoard(scene);
+//    auto *knight = new QGraphicsPixmapItem;
+//    knight->setPixmap(QPixmap("./sources/horse.png"));
+//    knight->setPos(0,0);
+//    knight->setOffset(5, 0);
+//    scene->addItem(knight);
+    ui->guiboard->setScene(scene);
+}
+
+void MainWindow::PrintResult() {
+    auto *scene = new QGraphicsScene;
+    PrintGuiBoard(scene);
+    board.calc();
+    PrintGuiResult(scene);
+    ui->guiboard->setScene(scene);
+}
+
+void MainWindow::PrintGuiBoard(QGraphicsScene *scene) const {
     scene->setBackgroundBrush(QColor(232,208,170));
     auto  *FrameRect = new QGraphicsRectItem(QRectF(0, 0, 8 * width, 8 * width));
     QPen    pen;
@@ -67,7 +96,6 @@ void MainWindow::iniGuiBoard() {
         text->setDefaultTextColor(Qt::black);
         scene->addItem(text);
     }
-
     for (int i = 0; i < 8; ++i) {
         auto *text = new QGraphicsTextItem;
         auto *st = new QString;
@@ -80,10 +108,37 @@ void MainWindow::iniGuiBoard() {
         text->setDefaultTextColor(Qt::black);
         scene->addItem(text);
     }
-    auto *knight = new QGraphicsPixmapItem;
-    knight->setPixmap(QPixmap("./sources/horse.png"));
-    knight->setPos(0,0);
-    knight->setOffset(5, 0);
-    scene->addItem(knight);
-    ui->guiboard->setScene(scene);
+}
+
+void MainWindow::PrintGuiResult(QGraphicsScene *scene) {
+    for (int i = 0; i < 8; ++i)
+        for (int j = 0; j < 8; ++j) {
+            auto *data = new QGraphicsTextItem;
+            auto *st = new QString;
+            st->setNum(board.result[i][j]);
+            QFont font = data->font();
+            font.setPointSize(15);
+            data->setFont(font);
+            data->setPos(i * width, j * width);
+            data->setPlainText(*st);
+            data->setDefaultTextColor(Qt::black);
+            scene->addItem(data);
+        }
+}
+
+void MainWindow::PrintProcess() {
+
+}
+
+void MainWindow::Reset() {
+    board.reset();
+    iniGuiBoard();
+}
+
+void MainWindow::UpdateX() {
+    board.x = ui->inputX->text().toInt();
+}
+
+void MainWindow::UpdateY() {
+    board.y = ui->inputY->text().toInt();
 }
