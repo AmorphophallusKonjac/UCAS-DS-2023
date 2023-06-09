@@ -80,5 +80,10 @@ void MainWindow::iniGuiBoard() {
         text->setDefaultTextColor(Qt::black);
         scene->addItem(text);
     }
+    auto *knight = new QGraphicsPixmapItem;
+    knight->setPixmap(QPixmap("./sources/horse.png"));
+    knight->setPos(0,0);
+    knight->setOffset(5, 0);
+    scene->addItem(knight);
     ui->guiboard->setScene(scene);
 }
