@@ -15,7 +15,7 @@
 class Splay_Tree {
 public:
     TreeLink Root;
-    int  isSplit;
+    int isSplit;
     void insert(TreeLink &p, int x);
     void del(TreeLink &p, int x);
     TreeLink find_pre(TreeLink p);
@@ -27,7 +27,7 @@ public:
     TreeLink Build_Tree(TreeNode *t, int l, int r);
 private:
     TreeNode temp1[MAXN], temp2[MAXN], temp3[MAXN];
-    int temp_cnt[3];
+    int temp_cnt[4];
     void push_up(TreeLink x);
     void rotate(TreeLink x);
     void Splay(TreeLink x);

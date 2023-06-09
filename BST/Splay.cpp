@@ -133,10 +133,20 @@ void Splay_Tree::rotate(TreeLink x) {
 }
 
 void Splay_Tree::Splay(TreeLink x) {
-    for(TreeLink fa = nullptr; (fa=x->father) != nullptr; rotate(x))
-            if(fa->father != nullptr)
-                    rotate((get_w(fa) == get_w(x)) ? fa : x);
-    Root = x;
+    if(!isSplit) {
+        for (TreeLink fa = nullptr; (fa = x->father) != nullptr; rotate(x))
+            if (fa->father != nullptr)
+                rotate((get_w(fa) == get_w(x)) ? fa : x);
+        Root = x;
+    }
+    else {
+        for (TreeLink fa = nullptr; (fa = x->father) != nullptr && fa != Root; rotate(x))
+            if (fa->father != nullptr && fa->father != Root)
+                rotate((get_w(fa) == get_w(x)) ? fa : x);
+        if(get_w(x)) Root->rch = x;
+        else Root->lch = x;
+        push_up(Root);
+    }
 }
 
 int Splay_Tree::get_w(TreeLink x) {
@@ -166,28 +176,33 @@ TreeLink Splay_Tree::Build_Tree(TreeNode *t, int l, int r) {
 
 
 void Splay_Tree::merge(){
-    temp_cnt[0] = temp_cnt[1] = 0;
+    temp_cnt[1] = temp_cnt[2] = temp_cnt[3] = 0;
     Get_inorder_traversal(Root->lch, temp1, 1);
     Get_inorder_traversal(Root->rch, temp2, 2);
     int i = 1, j = 1;
     while(i <= temp_cnt[1] && j <= temp_cnt[2]){
         if(temp1[i].value < temp2[j].value) {
-            temp3[i + j - 1] = temp1[i]; ++i;
+            temp3[++temp_cnt[3]] = temp1[i]; ++i;
         }
-        else {
-            temp3[i + j - 1] = temp2[j]; ++j;
+        else if(temp1[i].value > temp2[j].value){
+            temp3[++temp_cnt[3]] = temp2[j]; ++j;
+        }
+        else{
+            temp3[++temp_cnt[3]].value = temp1[i].value;
+            temp3[temp_cnt[3]].cnt = temp1[i].cnt + temp2[j].cnt;
+            ++i; ++j;
         }
     }
     while(i <= temp_cnt[1]) {
-        temp3[i + j - 1] = temp1[i]; ++i;
+        temp3[++temp_cnt[3]] = temp1[i]; ++i;
     }
     while(j <= temp_cnt[2]) {
-        temp3[i + j - 1] = temp2[j]; ++j;
+        temp3[++temp_cnt[3]] = temp2[j]; ++j;
     }
-    for(int i=1;i<=temp_cnt[1] + temp_cnt[2];++i)
-        printf("%d ",temp3[i].value);
-    puts("");
-    Root = Build_Tree(temp3, 1, temp_cnt[1] + temp_cnt[2]);
+//    for(int i=1; i<=temp_cnt[3]; ++i)
+//        printf("%d ",temp3[i].value);
+//    puts("");
+    Root = Build_Tree(temp3, 1, temp_cnt[3]);
     isSplit = 0;
 }
 
@@ -203,6 +218,7 @@ TreeLink Splay_Tree::SPLIT(int x) {
 
 void Splay_Tree::split(int x){
     TreeLink newRoot = (TreeLink)malloc(sizeof(TreeNode));
+    newRoot->value = newRoot->cnt = 0;
     newRoot->rch = SPLIT(x);
     newRoot->lch = Root;
     Root = newRoot;
