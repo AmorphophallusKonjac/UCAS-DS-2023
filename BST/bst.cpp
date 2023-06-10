@@ -148,7 +148,7 @@ void BST::SetPaint() {
     scene->setBackgroundBrush(Qt::white);
     switch (BSTtype) {
         case 0:
-            scene->addText("This is Splay");
+            //scene->addText("This is Splay");
             PaintTree(Splaytree.Root, scene);
             break;
         case 1:
@@ -159,7 +159,8 @@ void BST::SetPaint() {
             scene->addText("This is AVL");
             break;
         case 3:
-            scene->addText("This is Treap");
+            //scene->addText("This is Treap");
+            PaintTree(Treaptree.Root, scene);
     }
     ui->PaintTree->setScene(scene);
 }
@@ -443,8 +444,8 @@ void BST::split() {
     ui->isLeft->setChecked(true);
     ui->isRight->setDisabled(false);
     ui->isRight->setChecked(false);
-    SBTtree.split(value);
-    SBT_SelectedNode = nullptr;
+    //SBTtree.split(value);
+    //SBT_SelectedNode = nullptr;
     Splaytree.split(value);
     Splay_SelectedNode = nullptr;
     //Treaptree.split(value);
