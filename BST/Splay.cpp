@@ -157,6 +157,7 @@ int Splay_Tree::get_w(TreeLink x) {
 }
 
 void Splay_Tree::Get_inorder_traversal(TreeLink p, TreeNode *t, int i) {
+    if(p == nullptr) return;
     if(p->lch) Get_inorder_traversal(p->lch, t, i);
     t[++temp_cnt[i]] = *p;
     if(p->rch) Get_inorder_traversal(p->rch, t, i);
