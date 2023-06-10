@@ -307,24 +307,32 @@ void BST::ins() {
 
             Splaytree.insert(Splaytree.Root->lch, value);
             Splay_SelectedNode = Splaytree.Root->lch;
+
+            Treap_SelectedNode = Treaptree.insert(Treaptree.Root->lch, value);
             break;
         case 1:
             SBT_SelectedNode = SBTtree.ins(SBTtree.root->rch, value);
 
             Splaytree.insert(Splaytree.Root->rch, value);
             Splay_SelectedNode = Splaytree.Root->rch;
+
+            Treap_SelectedNode = Treaptree.insert(Treaptree.Root->rch, value);
             break;
         case 2:
             SBT_SelectedNode = SBTtree.ins(SBTtree.root, value);
 
             Splaytree.insert(Splaytree.Root, value);
             Splay_SelectedNode = Splaytree.Root;
+
+            Treap_SelectedNode = Treaptree.insert(Treaptree.Root, value);
             break;
         default:
             SBT_SelectedNode = SBTtree.ins(SBTtree.root, value);
 
             Splaytree.insert(Splaytree.Root, value);
             Splay_SelectedNode = Splaytree.Root;
+
+            Treap_SelectedNode = Treaptree.insert(Treaptree.Root, value);
     }
     selectNode();
     QString st;
@@ -353,6 +361,9 @@ void BST::del() {
 
             Splay_flag = Splaytree.del(Splaytree.Root->lch, value);
             Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->lch, value) ? Splaytree.Root->lch : nullptr;
+
+            Treap_flag = Treaptree.del(Treaptree.Root->lch, value);
+            Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root->lch, value);
             break;
         case 1:
             SBT_flag = SBTtree.del(SBTtree.root->rch, value);
@@ -360,6 +371,9 @@ void BST::del() {
 
             Splay_flag = Splaytree.del(Splaytree.Root->rch, value);
             Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->rch, value) ? Splaytree.Root->rch : nullptr;
+
+            Treap_flag = Treaptree.del(Treaptree.Root->rch, value);
+            Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root->rch, value);
             break;
         case 2:
             SBT_flag = SBTtree.del(SBTtree.root, value);
@@ -367,6 +381,9 @@ void BST::del() {
 
             Splay_flag = Splaytree.del(Splaytree.Root, value);
             Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root, value) ? Splaytree.Root : nullptr;
+
+            Treap_flag = Treaptree.del(Treaptree.Root, value);
+            Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root, value);
             break;
         default:
             SBT_flag = SBTtree.del(SBTtree.root->lch, value);
@@ -374,6 +391,9 @@ void BST::del() {
 
             Splay_flag = Splaytree.del(Splaytree.Root, value);
             Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root, value) ? Splaytree.Root : nullptr;
+
+            Treap_flag = Treaptree.del(Treaptree.Root, value);
+            Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root, value);
     }
     selectNode();
     selectFlag();
@@ -444,8 +464,8 @@ void BST::split() {
     ui->isLeft->setChecked(true);
     ui->isRight->setDisabled(false);
     ui->isRight->setChecked(false);
-    //SBTtree.split(value);
-    //SBT_SelectedNode = nullptr;
+    SBTtree.split(value);
+    SBT_SelectedNode = nullptr;
     Splaytree.split(value);
     Splay_SelectedNode = nullptr;
     //Treaptree.split(value);
