@@ -74,6 +74,10 @@ bool chess::calc() {
             }
         }
     }
+    for (; !stack.empty(); stack.pop());
+    for (auto & vi : vis)
+        for (int & j : vi)
+                j = 0;
     if (cnt == 64)
         return true;
     return false;

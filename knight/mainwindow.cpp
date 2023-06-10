@@ -49,11 +49,11 @@ void MainWindow::iniUI() {
 void MainWindow::iniGuiBoard() {
     auto *scene = new QGraphicsScene;
     PrintGuiBoard(scene);
-//    auto *knight = new QGraphicsPixmapItem;
-//    knight->setPixmap(QPixmap("./sources/horse.png"));
-//    knight->setPos(0,0);
-//    knight->setOffset(5, 0);
-//    scene->addItem(knight);
+    auto *knight = new QGraphicsPixmapItem;
+    knight->setPixmap(QPixmap("./sources/horse.png"));
+    knight->setPos(0,0);
+    knight->setOffset(5, 0);
+    scene->addItem(knight);
     ui->guiboard->setScene(scene);
 }
 
@@ -136,7 +136,7 @@ void MainWindow::Reset() {
 }
 
 void MainWindow::UpdateX() {
-    board.x0 = ui->inputX->text().toInt();
+    board.x0= ui->inputX->text().toInt();
 }
 
 void MainWindow::UpdateY() {
