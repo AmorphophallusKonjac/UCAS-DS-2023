@@ -10,6 +10,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include "board.h"
+#include "chess.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,7 +23,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
     ~MainWindow() override;
-    board board;
+    //board board;
+    chess board;
 public slots:
     void PrintResult();
     void PrintProcess();

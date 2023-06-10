@@ -6,7 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-set(CMAKE_PREFIX_PATH "C:/Qt/6.5.1/mingw_64/lib/cmake")
+set(CMAKE_PREFIX_PATH "D:/Qt/6.5.1/mingw_64/lib/cmake")
 
 find_package(Qt6 COMPONENTS
         Core
@@ -14,7 +14,7 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(knight main.cpp mainwindow.cpp mainwindow.h mainwindow.ui board.cpp board.h)
+add_executable(knight main.cpp mainwindow.cpp mainwindow.h mainwindow.ui board.cpp board.h chess.cpp)
 target_link_libraries(knight
         Qt::Core
         Qt::Gui

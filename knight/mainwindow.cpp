@@ -136,9 +136,9 @@ void MainWindow::Reset() {
 }
 
 void MainWindow::UpdateX() {
-    board.x = ui->inputX->text().toInt();
+    board.x0 = ui->inputX->text().toInt();
 }
 
 void MainWindow::UpdateY() {
-    board.y = ui->inputY->text().toInt();
+    board.y0 = ui->inputY->text().toInt();
 }
