@@ -19,12 +19,12 @@ public:
     ~TREAP();
     TreeLink Root;
     int isSplit;
-    void insert(TreeLink &p, int x);
+    TreeLink insert(TreeLink &p, int x);
     int del(TreeLink &p, int x);
     TreeLink find_pre(TreeLink p, int x);
     TreeLink find_suf(TreeLink p, int x);
     TreeLink find_kth(TreeLink p, int k);    //查找第k大的结点
-    int find_rank(TreeLink p, int x);   //查找值为x的结点的rank,当返回值rank非0时查找成功,并把它Splay到Root
+    TreeLink find_rank(TreeLink p, int x);   //查找值为x的结点的rank,把rank值存入ans中,返回查找到的结点
     void split(int x);  //将当前树分裂,小于等于x的点在左子树,大于x的点在右子树
     void merge();   //把虚根的左右子树合并
     void rel(TreeLink &p);
