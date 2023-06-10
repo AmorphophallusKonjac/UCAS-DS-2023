@@ -26,7 +26,7 @@ public:
     int find_rank(TreeLink p, int x);       //查找值为x的结点的rank,当返回值rank非0时查找成功,并把它Splay到Root
     void split(int x);      //把两棵分裂的树作为一个虚根的左右子树
     void merge();       //把虚根的两棵子树合并
-    TreeLink Build_Tree(TreeNode *t, int l, int r);
+    TreeLink Build_Tree(TreeNode *t, TreeLink fa, int l, int r);
     void rel(TreeLink &p);
 private:
     TreeNode temp1[MAXN], temp2[MAXN], temp3[MAXN];

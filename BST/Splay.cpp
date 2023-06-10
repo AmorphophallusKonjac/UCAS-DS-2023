@@ -163,15 +163,16 @@ void Splay_Tree::Get_inorder_traversal(TreeLink p, TreeNode *t, int i) {
     if(p->rch) Get_inorder_traversal(p->rch, t, i);
 }
 
-TreeLink Splay_Tree::Build_Tree(TreeNode *t, int l, int r) {
+TreeLink Splay_Tree::Build_Tree(TreeNode *t, TreeLink fa, int l, int r) {
     if(l > r) return nullptr;
     int mid = (l + r + 1) / 2;
     TreeLink newNode = (TreeLink)malloc(sizeof(TreeNode));
     newNode->value = t[mid].value;
     newNode->cnt = t[mid].cnt;
     newNode->lch = newNode->rch = nullptr;
-    if(l < mid) newNode->lch = Build_Tree(t, l, mid-1);
-    if(mid < r) newNode->rch = Build_Tree(t, mid+1, r);
+    newNode->father = fa;
+    if(l < mid) newNode->lch = Build_Tree(t, newNode, l, mid-1);
+    if(mid < r) newNode->rch = Build_Tree(t, newNode, mid+1, r);
     push_up(newNode);
     return newNode;
 }
@@ -204,7 +205,7 @@ void Splay_Tree::merge(){
 //    for(int i=1; i<=temp_cnt[3]; ++i)
 //        printf("%d ",temp3[i].value);
 //    puts("");
-    Root = Build_Tree(temp3, 1, temp_cnt[3]);
+    Root = Build_Tree(temp3, nullptr, 1, temp_cnt[3]);
     isSplit = 0;
 }
 
