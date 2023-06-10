@@ -150,6 +150,8 @@ void TREAP::SPLIT(TreeLink p, TreeLink &T1, TreeLink &T2, int x){
 void TREAP::split(int x) {
     TreeLink Tree1 = nullptr, Tree2 = nullptr;
     SPLIT(Root, Tree1, Tree2, x);
+    if(Root == nullptr)
+        Root = (TreeLink)malloc(sizeof(TreeNode));
     Root->cnt = Root->value = 0;
     Root->lch = Tree1;
     Root->rch = Tree2;
@@ -158,6 +160,7 @@ void TREAP::split(int x) {
 }
 
 void TREAP::MERGE(TreeLink a) {
+    if(a == nullptr) return;
     if(a->lch) MERGE(a->lch);
     while(a->cnt){
         insert(Root, a->value);
@@ -168,7 +171,9 @@ void TREAP::MERGE(TreeLink a) {
 
 void TREAP::merge(){
     TreeLink Root2;
-    if(Root->lch->size > Root->rch->size) {
+    int lsize = Root->lch ? Root->lch->size : 0;
+    int rsize = Root->rch ? Root->rch->size : 0;
+    if(lsize > rsize) {
         Root2 = Root->rch;
         Root = Root->lch;
     }
