@@ -468,7 +468,7 @@ void BST::split() {
     SBT_SelectedNode = nullptr;
     Splaytree.split(value);
     Splay_SelectedNode = nullptr;
-    //Treaptree.split(value);
+    Treaptree.split(value);
     SelectedTree = 0;
     rltLabel->setText("split complete");
     SelectedNode = nullptr;
@@ -487,7 +487,7 @@ void BST::merge() {
     SBT_SelectedNode = nullptr;
     Splaytree.merge();
     Splay_SelectedNode = nullptr;
-    //Treaptree.merge();
+    Treaptree.merge();
     SelectedTree = 2;
     rltLabel->setText("merge complete");
     SelectedNode = nullptr;
