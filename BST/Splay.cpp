@@ -6,15 +6,18 @@
 
 void Splay_Tree::insert(TreeLink &p, int x, int Root_w) {
     TreeLink tempRoot = Root;
-    if(isSplit) Root = p;
-    if(p == nullptr){
-        p = (TreeLink)malloc(sizeof(TreeNode));
-        p->lch = p->rch = p->father = nullptr;
-        p->value = x;
-        p->cnt = 1;
+    if(isSplit){
+        Root = p;
+        if(Root) Root->father = nullptr;
+    }
+    if(Root == nullptr){
+        Root = (TreeLink)malloc(sizeof(TreeNode));
+        Root->lch = Root->rch = Root->father = nullptr;
+        Root->value = x;
+        Root->cnt = 1;
     }
     else {
-        TreeLink now = p, fa = nullptr;
+        TreeLink now = Root, fa = nullptr;
         while (1) {
             if (x == now->value) {
                 now->cnt++;
@@ -39,6 +42,7 @@ void Splay_Tree::insert(TreeLink &p, int x, int Root_w) {
     if(isSplit){
         if(Root_w) tempRoot->rch = Root;
         else tempRoot->lch = Root;
+        if(Root) Root->father = tempRoot;
         Root = tempRoot;
     }
 }
@@ -47,37 +51,41 @@ int Splay_Tree::del(TreeLink &p, int x, int Root_w) {
     int rtn;
     if(!find_rank(p, x, Root_w)) return 0;
     TreeLink tempRoot = Root;
-    if(isSplit) Root = p;
-    if(p->cnt > 1) {
-        p->cnt--;
-        push_up(p);
+    if(isSplit){
+        Root = p;
+        if(Root) Root->father = nullptr;
+    }
+    if(Root->cnt > 1) {
+        Root->cnt--;
+        push_up(Root);
         rtn = 1;
     }
-    else if(p->lch == nullptr && p->rch == nullptr){
-        p = nullptr;
+    else if(Root->lch == nullptr && Root->rch == nullptr){
+        Root = nullptr;
         rtn = 2;
     }
-    else if(p->rch == nullptr){
-        p = p->lch;
-        p->father = nullptr;
+    else if(Root->rch == nullptr){
+        Root = Root->lch;
+        Root->father = nullptr;
         rtn = 2;
     }
-    else if(p->lch == nullptr){
-        p = p->rch;
-        p->father = nullptr;
+    else if(Root->lch == nullptr){
+        Root = Root->rch;
+        Root->father = nullptr;
         rtn = 2;
     }
     else {
         TreeLink left = find_pre(p);
         Splay(left);
-        p->rch = p->rch->rch;
-        p->rch->father = p;
+        Root->rch = Root->rch->rch;
+        Root->rch->father = p;
         push_up(p);
         rtn = 2;
     }
     if(isSplit){
         if(Root_w) tempRoot->rch = Root;
         else tempRoot->lch = Root;
+        if(Root) Root->father = tempRoot;
         Root = tempRoot;
     }
     return rtn;
@@ -110,7 +118,10 @@ TreeLink Splay_Tree::find_kth(TreeLink p, int k) {
 
 int Splay_Tree::find_rank(TreeLink p, int x,int Root_w) {
     TreeLink tempRoot = Root;
-    if(isSplit) Root = p;
+    if(isSplit){
+        Root = p;
+        if(Root) Root->father = nullptr;
+    }
     int rtn;
     if(p == nullptr) rtn = 0;
     else {
@@ -137,6 +148,7 @@ int Splay_Tree::find_rank(TreeLink p, int x,int Root_w) {
     if(isSplit){
         if(Root_w) tempRoot->rch = Root;
         else tempRoot->lch = Root;
+        if(Root) Root->father = tempRoot;
         Root = tempRoot;
     }
     return rtn;

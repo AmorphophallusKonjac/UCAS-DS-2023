@@ -360,7 +360,7 @@ void BST::del() {
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root->lch, value);
 
             Splay_flag = Splaytree.del(Splaytree.Root->lch, value, 0);
-            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->lch, value) ? Splaytree.Root->lch : nullptr;
+            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->lch, value, 0) ? Splaytree.Root->lch : nullptr;
 
             Treap_flag = Treaptree.del(Treaptree.Root->lch, value);
             Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root->lch, value);
@@ -370,7 +370,7 @@ void BST::del() {
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root->rch, value);
 
             Splay_flag = Splaytree.del(Splaytree.Root->rch, value, 1);
-            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->rch, value) ? Splaytree.Root->rch : nullptr;
+            Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->rch, value, 1) ? Splaytree.Root->rch : nullptr;
 
             Treap_flag = Treaptree.del(Treaptree.Root->rch, value);
             Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root->rch, value);
