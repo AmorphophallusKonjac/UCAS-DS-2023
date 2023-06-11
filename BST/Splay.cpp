@@ -7,7 +7,9 @@
 void Splay_Tree::insert(TreeLink &p, int x) {
     if(p == nullptr){
         p = (TreeLink)malloc(sizeof(TreeNode));
-        p->lch = p->rch = p->father = nullptr;
+        p->lch = p->rch = nullptr;
+        if(isSplit) p->father = Root;
+        else p->father = nullptr;
         p->value = x;
         p->cnt = 1;
         return;
@@ -141,11 +143,12 @@ void Splay_Tree::Splay(TreeLink x) {
         Root = x;
     }
     else {
-        for (TreeLink fa = nullptr; (fa = x->father) != nullptr && fa != Root; rotate(x))
+        for (TreeLink fa = nullptr; (fa = x->father) != nullptr && (fa = x->father) != Root;) {
             if (fa->father != nullptr && fa->father != Root)
                 rotate((get_w(fa) == get_w(x)) ? fa : x);
-        if(get_w(x)) Root->rch = x;
-        else Root->lch = x;
+            if(x->father != nullptr && x->father != Root) rotate(x);
+        }
+        if(x->father != Root) rotate(x);
         push_up(Root);
     }
 }
@@ -176,7 +179,6 @@ TreeLink Splay_Tree::Build_Tree(TreeNode *t, TreeLink fa, int l, int r) {
     push_up(newNode);
     return newNode;
 }
-
 
 void Splay_Tree::merge(){
     temp_cnt[1] = temp_cnt[2] = temp_cnt[3] = 0;
@@ -224,6 +226,8 @@ void Splay_Tree::split(int x){
     newRoot->value = newRoot->cnt = 0;
     newRoot->rch = SPLIT(x);
     newRoot->lch = Root;
+    if(newRoot->lch) newRoot->lch->father = newRoot;
+    if(newRoot->rch) newRoot->rch->father = newRoot;
     Root = newRoot;
     push_up(Root);
     isSplit = 1;
