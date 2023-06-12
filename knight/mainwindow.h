@@ -12,6 +12,10 @@
 #include "board.h"
 #include "chess.h"
 
+typedef struct step {
+    int x, y, cnt, in;
+} step;
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -26,11 +30,16 @@ public:
     //board board;
     chess board;
 public slots:
-    void PrintResult();
     void PrintProcess();
+    void PrintResult();
     void Reset();
     void UpdateX();
     void UpdateY();
+    void ChSucAns();
+    void ChPreAns();
+    void ChSelAns();
+    void ChSucStep();
+    void CHPreStep();
 private:
     Ui::MainWindow *ui;
     QLabel *msglabel;
@@ -39,6 +48,19 @@ private:
     int width;
     void PrintGuiBoard(QGraphicsScene *scene) const;
     void PrintGuiResult(QGraphicsScene *scene);
+    int CurrentAns;
+    int CurrentListCnt;
+    int CntAns;
+    void ShowResultMsg();
+    void DisplayBoard();
+    int CurrentListIndex;
+    int ProcessResult[8][8]{0};
+    void BuildList(TreeLink x, int cnt);
+    std::vector<step> List;
+    void DisplayProcess();
+    void PrintGuiProcess(QGraphicsScene *scene);
+    void UpdateProcessButtonStatus();
+    void DebugDisplay();
 };
 
 

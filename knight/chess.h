@@ -11,9 +11,17 @@
 #include <algorithm>
 #include <queue>
 
+typedef struct TreeNode TreeNode, *TreeLink;
+
+typedef struct Edge {
+    TreeLink ot;
+    Edge *ne;
+} Edge, *EdgeLink;
+
 typedef struct TreeNode {
     int x, y;
-    TreeNode *lch, *rch, *fa;
+    TreeNode *fa;
+    EdgeLink h, t;
 } TreeNode, *TreeLink;
 
 typedef struct dir {
@@ -32,11 +40,12 @@ typedef struct Pos {
 class chess {
 public:
     chess();
-    int result[8][8]{0};
+    int result[3000][8][8]{0};
     int x0, y0;
     TreeLink root;
     void reset();
-    bool calc();
+    int calc();
+    int MAXANS;
 private:
     void rel(TreeLink x);
     static TreeLink NewNode(int x, int y);
@@ -46,6 +55,7 @@ private:
     int dy[8] = {-1, -2, -2, -1, 1, 2, 2, 1};
     static bool InRange(int x, int y);
     int vis[8][8]{0};
+    static EdgeLink NewEdge(TreeLink x, TreeLink y);
 };
 
 

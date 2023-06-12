@@ -4,10 +4,12 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_MainWindow.h" resolved
 
+#include <iostream>
 #include "mainwindow.h"
 #include "ui_MainWindow.h"
 #include "QRegularExpressionValidator"
 #include "QRegularExpression"
+#include "QDebug"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -21,6 +23,10 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::iniUI() {
+    // initial CurrentAns
+    CurrentAns = 0;
+    ui->SucAns->setDisabled(true);
+    ui->PreAns->setDisabled(true);
     // initial width
     width = 40;
     // initial msglabel
@@ -44,23 +50,51 @@ void MainWindow::iniUI() {
     connect(ui->isreset, SIGNAL(clicked(bool)), this, SLOT(Reset()));
     connect(ui->inputX, SIGNAL(textChanged(QString)), this, SLOT(UpdateX()));
     connect(ui->inputY, SIGNAL(textChanged(QString)), this, SLOT(UpdateY()));
+    connect(ui->PreAns, SIGNAL(clicked(bool)), this, SLOT(ChPreAns()));
+    connect(ui->SucAns, SIGNAL(clicked(bool)), this, SLOT(ChSucAns()));
+    connect(ui->CurrentAns, SIGNAL(returnPressed()), this, SLOT(ChSelAns()));
+    connect(ui->ShowProcess, SIGNAL(clicked(bool)), this, SLOT(PrintProcess()));
+    connect(ui->SucStep, SIGNAL(clicked(bool)), this, SLOT(ChSucStep()));
+    connect(ui->PreStep, SIGNAL(clicked(bool)), this, SLOT(CHPreStep()));
+
+    // set CurrentAns input int
+    ui->CurrentAns->setValidator(new QIntValidator(ui->CurrentAns));
+
+    // set CurrentAns disable
+    ui->CurrentAns->setDisabled(true);
+
+    // set SucStep and PreStep disable
+    ui->SucStep->setDisabled(true);
+    ui->PreStep->setDisabled(true);
 }
 
 void MainWindow::iniGuiBoard() {
     auto *scene = new QGraphicsScene;
     PrintGuiBoard(scene);
-    auto *knight = new QGraphicsPixmapItem;
-    knight->setPixmap(QPixmap("./sources/horse.png"));
-    knight->setPos(0,0);
-    knight->setOffset(5, 0);
-    scene->addItem(knight);
     ui->guiboard->setScene(scene);
 }
 
 void MainWindow::PrintResult() {
+    if (ui->inputX->text() == "" || ui->inputY->text() == "") {
+        ui->msgdisplay->append("请完整输入参数\n");
+        return;
+    }
+    ui->ShowProcess->setDisabled(true);
+    ui->showResult->setDisabled(true);
     auto *scene = new QGraphicsScene;
     PrintGuiBoard(scene);
-    board.calc();
+    board.MAXANS = 3000;
+    CntAns = board.calc();
+    ui->CntAns->setNum(CntAns);
+    ui->CurrentAns->setText("1");
+    auto *num = new QString;
+    num->setNum(CntAns);
+    ui->msgdisplay->append("得到" + *num + "个解\n");
+    ShowResultMsg();
+    if (CntAns)
+        ui->CurrentAns->setDisabled(false);
+    if (CntAns > 1)
+        ui->SucAns->setDisabled(false);
     PrintGuiResult(scene);
     ui->guiboard->setScene(scene);
 }
@@ -115,7 +149,7 @@ void MainWindow::PrintGuiResult(QGraphicsScene *scene) {
         for (int j = 0; j < 8; ++j) {
             auto *data = new QGraphicsTextItem;
             auto *st = new QString;
-            st->setNum(board.result[i][j]);
+            st->setNum(board.result[CurrentAns][i][j]);
             QFont font = data->font();
             font.setPointSize(15);
             data->setFont(font);
@@ -126,13 +160,27 @@ void MainWindow::PrintGuiResult(QGraphicsScene *scene) {
         }
 }
 
-void MainWindow::PrintProcess() {
-
-}
-
 void MainWindow::Reset() {
     board.reset();
     iniGuiBoard();
+    CurrentAns = 0;
+    CntAns = 0;
+    ui->CurrentAns->setText("");
+    ui->CntAns->setNum(0);
+    ui->SucAns->setDisabled(true);
+    ui->PreAns->setDisabled(true);
+    ui->SucStep->setDisabled(true);
+    ui->PreStep->setDisabled(true);
+    ui->msgdisplay->clear();
+    ui->CurrentAns->setDisabled(true);
+    List.clear();
+    ui->showResult->setDisabled(false);
+    ui->ShowProcess->setDisabled(false);
+    for (auto & i : ProcessResult)
+        for (int & j : i)
+            j = 0;
+    ui->inputY->clear();
+    ui->inputX->clear();
 }
 
 void MainWindow::UpdateX() {
@@ -141,4 +189,181 @@ void MainWindow::UpdateX() {
 
 void MainWindow::UpdateY() {
     board.y0 = ui->inputY->text().toInt();
+}
+
+void MainWindow::ChSucAns() {
+    ++CurrentAns;
+    ShowResultMsg();
+    DisplayBoard();
+    if (CurrentAns == CntAns - 1) {
+        ui->SucAns->setDisabled(true);
+        return;
+    }
+    ui->SucAns->setDisabled(false);
+    ui->PreAns->setDisabled(false);
+}
+
+void MainWindow::ChPreAns() {
+    --CurrentAns;
+    ShowResultMsg();
+    DisplayBoard();
+    if (!CurrentAns) {
+        ui->PreAns->setDisabled(true);
+        return;
+    }
+    ui->SucAns->setDisabled(false);
+    ui->PreAns->setDisabled(false);
+}
+
+void MainWindow::ShowResultMsg() {
+    auto *st1 = new QString, *st2 = new QString;
+    st1->setNum(CurrentAns + 1);
+    st2->setNum(CntAns);
+    ui->msgdisplay->append("展示第" + *st1 + "/" + *st2 +"个解\n");
+    ui->CurrentAns->setText(*st1);
+}
+
+void MainWindow::DisplayBoard() {
+    auto *scene = new QGraphicsScene;
+    PrintGuiBoard(scene);
+    PrintGuiResult(scene);
+    ui->guiboard->setScene(scene);
+}
+
+void MainWindow::ChSelAns() {
+    int num = ui->CurrentAns->text().toInt();
+    if (num > CntAns || num < 1) {
+        ui->msgdisplay->append("请输入正确的解序号");
+        return;
+    }
+    CurrentAns = num - 1;
+    ShowResultMsg();
+    DisplayBoard();
+    ui->SucAns->setDisabled(false);
+    ui->PreAns->setDisabled(false);
+    if (CurrentAns == CntAns - 1) {
+        ui->SucAns->setDisabled(true);
+        return;
+    }
+    if (!CurrentAns) {
+        ui->PreAns->setDisabled(true);
+        return;
+    }
+}
+
+void MainWindow::PrintProcess() {
+    if (ui->inputX->text() == "" || ui->inputY->text() == "") {
+        ui->msgdisplay->append("请完整输入参数\n");
+        return;
+    }
+    ui->showResult->setDisabled(true);
+    ui->ShowProcess->setDisabled(true);
+    for (auto & i : ProcessResult)
+        for (int & j : i)
+            j = 0;
+    board.MAXANS = 2;
+    CntAns = board.calc();
+    BuildList(board.root, 1);
+    CurrentListIndex = 0;
+    ui->SucStep->setDisabled(false);
+    ui->PreStep->setDisabled(true);
+    CurrentListCnt = 1;
+    ProcessResult[List[CurrentListIndex].x][List[CurrentListIndex].y] = List[CurrentListIndex].cnt;
+    DisplayProcess();
+}
+
+void MainWindow::BuildList(TreeLink x, int cnt) {
+    List.push_back({x->x, x->y, cnt, 1});
+    for (EdgeLink i = x->h; i != nullptr; i = i->ne) {
+        TreeLink y = i->ot;
+        BuildList(y, cnt + 1);
+    }
+    List.push_back({x->x, x->y, cnt, 0});
+}
+
+void MainWindow::DisplayProcess() {
+    auto *scene = new QGraphicsScene;
+    PrintGuiBoard(scene);
+    PrintGuiProcess(scene);
+    ui->guiboard->setScene(scene);
+}
+
+void MainWindow::PrintGuiProcess(QGraphicsScene *scene) {
+    for (int i = 0; i < 8; ++i)
+        for (int j = 0; j < 8; ++j) {
+            if (ProcessResult[i][j] < CurrentListCnt && ProcessResult[i][j]) {
+                auto *data = new QGraphicsTextItem;
+                auto *st = new QString;
+                st->setNum(board.result[CurrentAns][i][j]);
+                QFont font = data->font();
+                font.setPointSize(15);
+                data->setFont(font);
+                data->setPos(i * width, j * width);
+                data->setPlainText(*st);
+                data->setDefaultTextColor(Qt::black);
+                scene->addItem(data);
+            }
+            if (ProcessResult[i][j] == CurrentListCnt) {
+                auto *knight = new QGraphicsPixmapItem;
+                knight->setPixmap(QPixmap("./sources/horse.png"));
+                knight->setOffset(5, 0);
+                knight->setPos(i * width, j * width);
+                scene->addItem(knight);
+            }
+        }
+}
+
+void MainWindow::ChSucStep() {
+    ++CurrentListIndex;
+    UpdateProcessButtonStatus();
+    if (List[CurrentListIndex].in) {
+        CurrentListCnt = List[CurrentListIndex].cnt;
+        ProcessResult[List[CurrentListIndex].x][List[CurrentListIndex].y] = CurrentListCnt;
+    }
+    else {
+        CurrentListCnt = List[CurrentListIndex].cnt - 1;
+        ProcessResult[List[CurrentListIndex].x][List[CurrentListIndex].y] = 0;
+    }
+    DisplayProcess();
+    //DebugDisplay();
+}
+
+void MainWindow::UpdateProcessButtonStatus() {
+    if (CurrentListIndex + 2 == List.size())
+        ui->SucStep->setDisabled(true);
+    else
+        ui->SucStep->setDisabled(false);
+    if (!CurrentListIndex)
+        ui->PreStep->setDisabled(true);
+    else
+        ui->PreStep->setDisabled(false);
+}
+
+void MainWindow::CHPreStep() {
+    if (List[CurrentListIndex].in) {
+        ProcessResult[List[CurrentListIndex].x][List[CurrentListIndex].y] = 0;
+    }
+    else {
+        ProcessResult[List[CurrentListIndex].x][List[CurrentListIndex].y] = List[CurrentListIndex].cnt;
+    }
+    --CurrentListIndex;
+    UpdateProcessButtonStatus();
+    if (List[CurrentListIndex].in)
+        CurrentListCnt = List[CurrentListIndex].cnt;
+    else
+        CurrentListCnt = List[CurrentListIndex].cnt - 1;
+    DisplayProcess();
+    //DebugDisplay();
+}
+
+void MainWindow::DebugDisplay() {
+    qDebug("CurrentListIndex: %d\n", CurrentListIndex);
+    qDebug("{List[CurrentListIndex].x, List[CurrentListIndex].y, List[CurrentListIndex].cnt, List[CurrentListIndex].in}: {%d, %d, %d, %d}\n", List[CurrentListIndex].x, List[CurrentListIndex].y, List[CurrentListIndex].cnt, List[CurrentListIndex].in);
+    qDebug("CurrentListCnt: %d\n", CurrentListCnt);
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j)
+            std::cout << ProcessResult[i][j];
+        qDebug("\n");
+    }
+
 }
