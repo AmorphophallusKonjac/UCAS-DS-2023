@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>658</width>
-    <height>533</height>
+    <width>1151</width>
+    <height>638</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>马踏棋盘</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_4">
+   <layout class="QHBoxLayout" name="horizontalLayout_7">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
@@ -66,7 +66,7 @@
        <widget class="QTextBrowser" name="msgdisplay"/>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
         <item>
          <widget class="QPushButton" name="showResult">
           <property name="text">
@@ -74,10 +74,111 @@
           </property>
          </widget>
         </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QPushButton" name="showProcess">
+         <widget class="QPushButton" name="PreAns">
           <property name="text">
-           <string>演示搜索过程</string>
+           <string>上一个结果</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>35</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="CurrentAns">
+          <property name="minimumSize">
+           <size>
+            <width>40</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>16777215</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>/</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="CntAns">
+          <property name="maximumSize">
+           <size>
+            <width>30</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>35</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="SucAns">
+          <property name="text">
+           <string>下一个结果</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_5"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ShowProcess">
+        <property name="text">
+         <string>展示搜索过程</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QPushButton" name="PreStep">
+          <property name="text">
+           <string>上一步</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="SucStep">
+          <property name="text">
+           <string>下一步</string>
           </property>
          </widget>
         </item>
@@ -93,7 +194,14 @@
      </layout>
     </item>
     <item>
-     <widget class="QGraphicsView" name="guiboard"/>
+     <widget class="QGraphicsView" name="guiboard">
+      <property name="minimumSize">
+       <size>
+        <width>800</width>
+        <height>600</height>
+       </size>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -108,28 +216,12 @@
    <slot>repaint()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>108</x>
-     <y>452</y>
+     <x>132</x>
+     <y>474</y>
     </hint>
     <hint type="destinationlabel">
      <x>353</x>
      <y>368</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>showProcess</sender>
-   <signal>clicked()</signal>
-   <receiver>guiboard</receiver>
-   <slot>repaint()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>265</x>
-     <y>460</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>356</x>
-     <y>430</y>
     </hint>
    </hints>
   </connection>
@@ -140,12 +232,108 @@
    <slot>repaint()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>230</x>
-     <y>491</y>
+     <x>240</x>
+     <y>607</y>
     </hint>
     <hint type="destinationlabel">
      <x>384</x>
      <y>476</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PreAns</sender>
+   <signal>clicked()</signal>
+   <receiver>guiboard</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>85</x>
+     <y>506</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>352</x>
+     <y>386</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>SucAns</sender>
+   <signal>clicked()</signal>
+   <receiver>guiboard</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>333</x>
+     <y>506</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>364</x>
+     <y>408</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CurrentAns</sender>
+   <signal>returnPressed()</signal>
+   <receiver>guiboard</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>179</x>
+     <y>504</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>370</x>
+     <y>516</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ShowProcess</sender>
+   <signal>clicked()</signal>
+   <receiver>guiboard</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>527</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>371</x>
+     <y>513</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>SucStep</sender>
+   <signal>clicked()</signal>
+   <receiver>guiboard</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>304</x>
+     <y>558</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>371</x>
+     <y>549</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>PreStep</sender>
+   <signal>clicked()</signal>
+   <receiver>guiboard</receiver>
+   <slot>repaint()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>132</x>
+     <y>560</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>460</x>
+     <y>524</y>
     </hint>
    </hints>
   </connection>

@@ -170,13 +170,16 @@ retdata SBT::delet(TreeLink &x, int v) {
             y = delet(x->lch, x->value + 1);
             x->value = y.value;
             x->cnt = y.cnt;
+            maintain(x, true);
         }
         return ret;
     }
     if (v < x->value)
-        return delet(x->lch, v);
+        ret = delet(x->lch, v);
     else
-        return delet(x->rch, v);
+        ret = delet(x->rch, v);
+    maintain(x, v <= x->value);
+    return ret;
 }
 
 int SBT::rank(TreeLink &x, int v) {

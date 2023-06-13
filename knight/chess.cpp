@@ -3,7 +3,6 @@
 //
 
 #include "chess.h"
-#include "QDebug"
 
 chess::chess() {
     x0 = y0 = 0;
@@ -15,33 +14,41 @@ void chess::reset() {
     rel(root);
     root = nullptr;
     for (auto & i : result)
-        for (int & j : i)
-            j = 0;
+        for (auto & j : i)
+            for (int & k : j)
+                k = 0;
 }
 
 void chess::rel(TreeLink x) {
     if (x == nullptr) return;
-    rel(x->lch);
-    rel(x->rch);
+    for (EdgeLink i = x->h; i != nullptr; i = i->ne) {
+        TreeLink y = i->ot;
+        rel(y);
+    }
     free(x);
 }
 
-bool chess::calc() {
+int chess::calc() {
     std::stack <Pos> stack;
-    int cnt = 1;
-    TreeLink s;
+    int cnt = 1, CntAns = 0;
+    int rlt_mid[8][8]{0};
     vis[x0][y0] = 1;
-    result[x0][y0] = cnt;
+    rlt_mid[x0][y0] = cnt;
     root = NewNode(x0, y0);
-    s = root;
-    stack.push({x0,y0,GenNext(x0, y0), nullptr});
-    while (!stack.empty() && cnt < 64) {
+    stack.push({x0,y0,GenNext(x0, y0), root});
+    while (!stack.empty() && CntAns < MAXANS) {
+        if (cnt == 64) {
+            for (int i = 0; i < 8; ++i)
+                for (int j = 0; j < 8; ++j)
+                        result[CntAns][i][j] = rlt_mid[i][j];
+            ++CntAns;
+        }
         int x = stack.top().x;
         int y = stack.top().y;
         DIR q = stack.top().direction;
-        TreeLink t = stack.top().p;
+        TreeLink s = stack.top().p;
         if (q.empty()) {
-            result[x][y] = 0;
+            rlt_mid[x][y] = 0;
             vis[x][y] = 0;
             --cnt;
             stack.pop();
@@ -49,7 +56,7 @@ bool chess::calc() {
         else {
             int xx = x + dx[q.front().dir], yy = y + dy[q.front().dir];
             if (!q.front().cnt && cnt < 63) {
-                result[x][y] = 0;
+                rlt_mid[x][y] = 0;
                 vis[x][y] = 0;
                 --cnt;
                 stack.pop();
@@ -57,37 +64,27 @@ bool chess::calc() {
             else {
                 stack.top().direction.pop();
                 vis[xx][yy] = 1;
-                result[xx][yy] = ++cnt;
-                if (t == nullptr) {
-                    s->lch = NewNode(xx, yy);
-                    s->lch->fa = s;
-                    stack.top().p = s->lch;
-                    s = s->lch;
-                }
-                else {
-                    t->rch = NewNode(xx, yy);
-                    t->rch->fa = t;
-                    stack.top().p = t->rch;
-                    s = t->rch;
-                }
-                stack.push({xx, yy, GenNext(xx, yy)});
+                rlt_mid[xx][yy] = ++cnt;
+                TreeLink t = NewNode(xx, yy);
+                EdgeLink e = NewEdge(s, t);
+                stack.push({xx, yy, GenNext(xx, yy), t});
             }
         }
     }
     for (; !stack.empty(); stack.pop());
-    for (auto & vi : vis)
-        for (int & j : vi)
+    for (auto & i : vis)
+        for (int & j : i)
                 j = 0;
-    if (cnt == 64)
-        return true;
-    return false;
+    return CntAns;
 }
 
 TreeLink chess::NewNode(int x, int y) {
     auto p = (TreeLink) malloc(sizeof(TreeNode));
+    p->h = nullptr;
+    p->t = nullptr;
     p->x = x;
     p->y = y;
-    p->lch = p->rch = p->fa = nullptr;
+    p->fa = nullptr;
     return p;
 }
 
@@ -117,4 +114,18 @@ bool chess::cmp(dir a, dir b) {
 
 bool chess::InRange(int x, int y) {
     return 0 <= x && x < 8 && 0 <= y && y < 8;
+}
+
+EdgeLink chess::NewEdge(TreeLink x, TreeLink y) {
+    auto p = (EdgeLink)malloc(sizeof(Edge));
+    p->ot = y;
+    p->ne = nullptr;
+    if (x->h == nullptr) {
+        x->h = x->t = p;
+    }
+    else {
+        x->t->ne = p;
+        x->t = p;
+    }
+    return p;
 }
