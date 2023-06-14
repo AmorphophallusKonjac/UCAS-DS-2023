@@ -261,6 +261,11 @@ void BST::fnd() {
         SetPaint();
         return;
     }
+    if (ui->inputNumber->text() != "0" && value == 0) {
+        rltLabel->setText("Sorry, only support argument in int range");
+        SetPaint();
+        return;
+    }
     switch (SelectedTree) {
         case 0:
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root->lch, value);
@@ -317,6 +322,11 @@ void BST::fnd() {
 void BST::ins() {
     if (ui->inputNumber->text() == "") {
         rltLabel->setText("Please enter argument");
+        SetPaint();
+        return;
+    }
+    if (ui->inputNumber->text() != "0" && value == 0) {
+        rltLabel->setText("Sorry, only support argument in int range");
         SetPaint();
         return;
     }
@@ -377,6 +387,11 @@ void BST::del() {
     int ans;
     if (ui->inputNumber->text() == "") {
         rltLabel->setText("Please enter argument");
+        SetPaint();
+        return;
+    }
+    if (ui->inputNumber->text() != "0" && value == 0) {
+        rltLabel->setText("Sorry, only support argument in int range");
         SetPaint();
         return;
     }
@@ -499,6 +514,11 @@ void BST::wheelEvent(QWheelEvent *event)
 void BST::split() {
     if (ui->inputNumber->text() == "") {
         rltLabel->setText("Please enter argument");
+        SetPaint();
+        return;
+    }
+    if (ui->inputNumber->text() != "0" && value == 0) {
+        rltLabel->setText("Sorry, only support argument in int range");
         SetPaint();
         return;
     }
