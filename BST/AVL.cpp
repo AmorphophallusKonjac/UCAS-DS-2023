@@ -200,22 +200,12 @@ int AVL::del(TreeLink &p, int x, int Root_w){
         if(x == now->value){
             if(now->cnt > 1){
                 now->cnt --;
-                while(fa){
-                    --fa->size;
-                    fa = fa->father;
-                }
                 rtn = 1;
                 break;
             }
             if(now->rch == nullptr){
-                if(get_w(now)){
-                    Del_Node = now;
-                    break;
-                }
-                else{
-                    Del_Node = now;
-                    break;
-                }
+                if(get_w(now)){ Del_Node = now; break; }
+                else{ Del_Node = now; break; }
             }
             else{
                 TreeLink suf = find_suf(now, now->value);
@@ -281,7 +271,7 @@ int AVL::del(TreeLink &p, int x, int Root_w){
         }
         else break;
     }
-    if(Del_Node && Del_Node->rch){
+    if(rtn == 2 && Del_Node->rch){
         if(Del_Node->father){
             if(get_w(Del_Node))
                 Del_Node->father->rch = Del_Node->rch;
@@ -290,7 +280,7 @@ int AVL::del(TreeLink &p, int x, int Root_w){
         }
         else Root = Del_Node->rch;
     }
-    else if(Del_Node){
+    else if(rtn == 2){
         if(Del_Node->father){
             if(get_w(Del_Node))
                 Del_Node->father->rch = Del_Node->lch;
@@ -387,6 +377,7 @@ void AVL::split(int x){
 }
 
 void AVL::rel(TreeLink &p) {
+    isSplit = 0;
     if (p == nullptr) return;
     if(p->lch) rel(p->lch);
     if(p->rch) rel(p->rch);
