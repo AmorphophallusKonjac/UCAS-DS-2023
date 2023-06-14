@@ -172,81 +172,40 @@ void BST::CalcWidth(TreeLink x) {
     if (x == nullptr) return;
     auto data = GenText(x);
     x->RectWidth = (NodeWidth > data->document()->documentLayout()->documentSize().width()) ? NodeWidth : data->document()->documentLayout()->documentSize().width();
-    x->width = x->RectWidth;
+    x->lwidth = x->RectWidth / 2.0;
+    x->rwidth = x->RectWidth / 2.0;
     delete data;
     if (x->lch == nullptr && x->rch == nullptr)
         return;
     if (x->lch != nullptr) {
         CalcWidth(x->lch);
-        if (x->lch->rch != nullptr) {
-            if (NodeGapX + x->lch->rch->width <= x->RectWidth / 2.0) {
-                x->width += fmax(x->lch->RectWidth, x->lch->RectWidth / 2.0 + NodeGapX / 2.0 + ((x->lch->lch != nullptr) ? x->lch->lch->width : 0));
-            }
-            else {
-                x->width += x->lch->width + NodeGapX / 2.0 - x->RectWidth / 2.0;
-            }
+        if (x->lch->rwidth + NodeGapX / 2.0 <= x->RectWidth / 2.0) {
+            x->lwidth += x->lch->RectWidth / 2.0 + x->lch->lwidth;
         }
         else {
-            if (NodeGapX / 2.0 + x->lch->RectWidth / 2.0 <= x->RectWidth / 2.0) {
-                x->width += fmax(x->lch->RectWidth, x->lch->RectWidth / 2.0 + NodeGapX / 2.0 + ((x->lch->lch != nullptr) ? x->lch->lch->width : 0));
-            }
-            else {
-                x->width += x->lch->width + NodeGapX / 2.0 - x->RectWidth / 2.0;
-            }
+            x->lwidth = x->lch->lwidth + x->lch->rwidth + NodeGapX / 2.0;
         }
     }
     if (x->rch != nullptr) {
         CalcWidth(x->rch);
-        if (x->rch->lch != nullptr) {
-            if (NodeGapX + x->rch->lch->width <= x->RectWidth / 2.0) {
-                x->width += fmax(x->rch->RectWidth, x->rch->RectWidth / 2.0 + NodeGapX / 2.0 + ((x->rch->rch != nullptr) ? x->rch->rch->width : 0));
-            }
-            else {
-                x->width += x->rch->width + NodeGapX / 2.0 - x->RectWidth / 2.0;
-            }
+        if (x->rch->lwidth + NodeGapX / 2.0 <= x->RectWidth / 2.0) {
+            x->rwidth += x->rch->RectWidth / 2.0 + x->rch->rwidth;
         }
         else {
-            if (NodeGapX / 2.0 + x->rch->RectWidth / 2.0 <= x->RectWidth / 2.0) {
-                x->width += fmax(x->rch->RectWidth, x->rch->RectWidth / 2.0 + NodeGapX / 2.0 + ((x->rch->rch != nullptr) ? x->rch->rch->width : 0));
-            }
-            else {
-                x->width += x->rch->width + NodeGapX / 2.0 - x->RectWidth / 2.0;
-            }
+            x->rwidth = x->rch->lwidth + x->rch->rwidth + NodeGapX / 2.0;
         }
     }
 }
 
 void BST::CalcPos(TreeLink t, double x, double y) {
     if (t == nullptr) return;
-    qDebug() << t->value << " " << t->RectWidth << " " << t->width << " "<< x << " " << y;
     t->x = x; t->y = y;
-    double lrwidth;
-    double rlwidth;
+    qDebug() << t->value << " " << t->lwidth << " " << t->rwidth;
     if (t->lch != nullptr) {
-        double xx;
-        lrwidth = (t->lch->rch != nullptr) ? t->lch->rch->width : 0;
-        if (t->lch->rch == nullptr) {
-            xx = x + t->RectWidth / 2.0 - NodeGapX / 2.0 - t->lch->RectWidth;
-        }
-        else {
-            xx = x + t->RectWidth / 2.0 - NodeGapX - lrwidth - t->lch->RectWidth / 2.0;
-        }
-        if (xx + t->lch->RectWidth / 2.0 >= x)
-            xx = x - t->lch->RectWidth;
-        CalcPos(t->lch, xx, y + NodeGapY + NodeHeight);
+        CalcPos(t->lch, t->x + t->RectWidth / 2.0 - t->lwidth + t->lch->lwidth - t->lch->RectWidth / 2.0, y + NodeGapY + NodeHeight);
     }
     if (t->rch != nullptr) {
-        double xx;
-        rlwidth = (t->rch->lch != nullptr) ? t->rch->lch->width : 0;
-        if (t->rch->lch == nullptr) {
-            xx = x + t->RectWidth / 2.0 + NodeGapX / 2.0;
-        }
-        else {
-            xx = x + t->RectWidth / 2.0 + NodeGapX + rlwidth - t->rch->RectWidth / 2.0;
-        }
-        if (xx + t->rch->RectWidth / 2.0 < x + t->RectWidth)
-            xx = x + t->RectWidth;
-        CalcPos(t->rch, xx, y + NodeGapY + NodeHeight);
+        CalcPos(t->rch, t->x + t->RectWidth / 2.0 + t->rwidth - t->rch->rwidth - t->rch->RectWidth / 2.0, y + NodeGapY + NodeHeight);
     }
 }
 
@@ -475,9 +434,11 @@ void BST::reset() {
     SBTtree.rel(SBTtree.root);
     SBTtree.root = nullptr;
     Splaytree.rel(Splaytree.Root);
+    Splaytree.isSplit = 0;
     Splaytree.Root = nullptr;
     Treaptree.rel(Treaptree.Root);
     Treaptree.Root = nullptr;
+    Treaptree.isSplit = 0;
     rltLabel->setText("reset");
     SetPaint();
 }
@@ -554,16 +515,16 @@ void BST::GenTitle(TreeLink x, QGraphicsScene *scene) const {
     textl->setDefaultTextColor(Qt::black);
     textr->setDefaultTextColor(Qt::black);
     if (x->lch != nullptr && x->rch != nullptr) {
-        textl->setPos(x->lch->x + 15, x->lch->y - 3 * textHeight);
-        textr->setPos(x->rch->x + 15, x->rch->y - 3 * textHeight);
+        textl->setPos(x->lch->x + x->lch->RectWidth / 2.0 - 25, x->lch->y - 3 * textHeight);
+        textr->setPos(x->rch->x + x->rch->RectWidth / 2.0 - 25, x->rch->y - 3 * textHeight);
     }
     else if (x->lch != nullptr && x->rch == nullptr) {
-        textl->setPos(x->lch->x + 15, x->lch->y - 3 * textHeight);
-        textr->setPos(x->lch->x + 15 + (x->lch->rch != nullptr ? x->lch->rch->width + NodeWidth : 80), x->lch->y - 3 * textHeight);
+        textl->setPos(x->lch->x + x->lch->RectWidth / 2.0 - 25, x->lch->y - 3 * textHeight);
+        textr->setPos(x->lch->x + x->lch->RectWidth / 2.0 - 25 + x->RectWidth / 2.0 + x->lch->rwidth + NodeGapX, x->lch->y - 3 * textHeight);
     }
     else if (x->lch == nullptr && x->rch != nullptr) {
-        textl->setPos(x->rch->x + 15 - (x->rch->lch != nullptr ? x->rch->lch->width + NodeWidth : 80), x->rch->y - 3 * textHeight);
-        textr->setPos(x->rch->x + 15, x->rch->y - 3 * textHeight);
+        textl->setPos(x->rch->x + x->rch->RectWidth / 2.0 - 25 - x->rch->lwidth - NodeGapX, x->rch->y - 3 * textHeight);
+        textr->setPos(x->rch->x + x->rch->RectWidth / 2.0 - 25, x->rch->y - 3 * textHeight);
     }
     else {
         textl->setPos(0, 0);
