@@ -16,8 +16,8 @@ class Splay_Tree {
 public:
     Splay_Tree();
     ~Splay_Tree();
-    TreeLink Root;
-    int isSplit;
+    TreeLink Root = nullptr;
+    int isSplit = 0;
     void insert(TreeLink &p, int x, int Root_w = 0);    //Root_w用于区分分裂后的树的左右子树，当对左树进行插入时，Root_w=0
     int del(TreeLink &p, int x, int Root_w = 0);
     TreeLink find_pre(TreeLink p);
