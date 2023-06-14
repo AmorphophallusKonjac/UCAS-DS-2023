@@ -65,6 +65,7 @@ private:
     void selectNode();
     int flag, SBT_flag, Splay_flag, AVL_flag, Treap_flag;
     void selectFlag();
+    QGraphicsTextItem* GenText(TreeLink x) const;
 };
 
 

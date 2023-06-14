@@ -7,7 +7,7 @@
 
 typedef struct TreeNode{
     int value, size, depth, key, cnt, bf;
-    double width, x, y;                             // gui使用，注意不要占用
+    double RectWidth, width, x, y;                             // gui使用，注意不要占用
     struct TreeNode *lch, *rch, *father;
 } TreeNode, *TreeLink;
 
