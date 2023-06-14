@@ -9,6 +9,7 @@
 #include "ui_BST.h"
 #include "QGraphicsItem"
 #include "QMouseEvent"
+#include "QAbstractTextDocumentLayout"
 
 BST::BST(QWidget *parent) :
         QMainWindow(parent), ui(new Ui::BST) {
@@ -28,7 +29,7 @@ void BST::iniUI() {
     // set GuiNode size and gap
     NodeWidth = 80;
     NodeHeight = 40;
-    NodeGapX = 40;
+    NodeGapX = 50;
     NodeGapY = 40;
 
     // set text size
@@ -169,40 +170,93 @@ void BST::SetPaint() {
 
 void BST::CalcWidth(TreeLink x) {
     if (x == nullptr) return;
-    x->width = NodeWidth;
+    auto data = GenText(x);
+    x->RectWidth = (NodeWidth > data->document()->documentLayout()->documentSize().width()) ? NodeWidth : data->document()->documentLayout()->documentSize().width();
+    x->width = x->RectWidth;
+    delete data;
     if (x->lch == nullptr && x->rch == nullptr)
         return;
     if (x->lch != nullptr) {
         CalcWidth(x->lch);
-        x->width += x->lch->width + NodeGapX / 2.0 - NodeWidth / 2.0;
+        if (x->lch->rch != nullptr) {
+            if (NodeGapX + x->lch->rch->width <= x->RectWidth / 2.0) {
+                x->width += fmax(x->lch->RectWidth, x->lch->RectWidth / 2.0 + NodeGapX / 2.0 + ((x->lch->lch != nullptr) ? x->lch->lch->width : 0));
+            }
+            else {
+                x->width += x->lch->width + NodeGapX / 2.0 - x->RectWidth / 2.0;
+            }
+        }
+        else {
+            if (NodeGapX / 2.0 + x->lch->RectWidth / 2.0 <= x->RectWidth / 2.0) {
+                x->width += fmax(x->lch->RectWidth, x->lch->RectWidth / 2.0 + NodeGapX / 2.0 + ((x->lch->lch != nullptr) ? x->lch->lch->width : 0));
+            }
+            else {
+                x->width += x->lch->width + NodeGapX / 2.0 - x->RectWidth / 2.0;
+            }
+        }
     }
     if (x->rch != nullptr) {
         CalcWidth(x->rch);
-        x->width += x->rch->width + NodeGapX / 2.0 - NodeWidth / 2.0;
+        if (x->rch->lch != nullptr) {
+            if (NodeGapX + x->rch->lch->width <= x->RectWidth / 2.0) {
+                x->width += fmax(x->rch->RectWidth, x->rch->RectWidth / 2.0 + NodeGapX / 2.0 + ((x->rch->rch != nullptr) ? x->rch->rch->width : 0));
+            }
+            else {
+                x->width += x->rch->width + NodeGapX / 2.0 - x->RectWidth / 2.0;
+            }
+        }
+        else {
+            if (NodeGapX / 2.0 + x->rch->RectWidth / 2.0 <= x->RectWidth / 2.0) {
+                x->width += fmax(x->rch->RectWidth, x->rch->RectWidth / 2.0 + NodeGapX / 2.0 + ((x->rch->rch != nullptr) ? x->rch->rch->width : 0));
+            }
+            else {
+                x->width += x->rch->width + NodeGapX / 2.0 - x->RectWidth / 2.0;
+            }
+        }
     }
 }
 
 void BST::CalcPos(TreeLink t, double x, double y) {
     if (t == nullptr) return;
+    qDebug() << t->value << " " << t->RectWidth << " " << t->width << " "<< x << " " << y;
     t->x = x; t->y = y;
     double lrwidth;
     double rlwidth;
     if (t->lch != nullptr) {
+        double xx;
         lrwidth = (t->lch->rch != nullptr) ? t->lch->rch->width : 0;
-        lrwidth = (lrwidth + NodeGapX / 2.0 < NodeWidth / 2.0) ? NodeWidth / 2.0 - NodeGapX / 2.0 : lrwidth;
-        CalcPos(t->lch, x - NodeGapX - lrwidth, y + NodeGapY + NodeHeight);
+        if (t->lch->rch == nullptr) {
+            xx = x + t->RectWidth / 2.0 - NodeGapX / 2.0 - t->lch->RectWidth;
+        }
+        else {
+            xx = x + t->RectWidth / 2.0 - NodeGapX - lrwidth - t->lch->RectWidth / 2.0;
+        }
+        if (xx + t->lch->RectWidth / 2.0 >= x)
+            xx = x - t->lch->RectWidth;
+        CalcPos(t->lch, xx, y + NodeGapY + NodeHeight);
     }
     if (t->rch != nullptr) {
+        double xx;
         rlwidth = (t->rch->lch != nullptr) ? t->rch->lch->width : 0;
-        rlwidth = (rlwidth + NodeGapX / 2.0 < NodeWidth / 2.0) ? NodeWidth / 2.0 - NodeGapX / 2.0 : rlwidth;
-        CalcPos(t->rch, x + NodeGapX + rlwidth, y + NodeGapY + NodeHeight);
+        if (t->rch->lch == nullptr) {
+            xx = x + t->RectWidth / 2.0 + NodeGapX / 2.0;
+        }
+        else {
+            xx = x + t->RectWidth / 2.0 + NodeGapX + rlwidth - t->rch->RectWidth / 2.0;
+        }
+        if (xx + t->rch->RectWidth / 2.0 < x + t->RectWidth)
+            xx = x + t->RectWidth;
+        CalcPos(t->rch, xx, y + NodeGapY + NodeHeight);
     }
 }
 
 void BST::GenScene(TreeLink x, QGraphicsScene *scene) {
     if (x == nullptr) return;
+    // gen text
+    auto data = GenText(x);
+
     // gen rect
-    auto *rect = new QGraphicsRectItem(QRectF(x->x,x->y,NodeWidth,NodeHeight));
+    auto *rect = new QGraphicsRectItem(QRectF(x->x,x->y,x->RectWidth,NodeHeight));
     QPen    pen;
     pen.setWidth(2);
     rect->setPen(pen);
@@ -210,30 +264,18 @@ void BST::GenScene(TreeLink x, QGraphicsScene *scene) {
         rect->setBrush(Qt::red);
     else
         rect->setBrush(Qt::darkBlue);
-    scene->addItem(rect);
 
-    // gen text
-    auto *data = new QGraphicsTextItem;
-    auto *NodeValue = new QString;
-    auto *NodeCnt = new QString;
-    NodeValue->setNum(x->value);
-    NodeCnt->setNum(x->cnt);
-    data->setPlainText(*NodeValue + "(" + *NodeCnt + ")");
-    QFont font = data->font();
-    font.setPointSize(textHeight);
-    data->setFont(font);
-    data->setPos(x->x, x->y);
-    data->setDefaultTextColor(Qt::white);
+    scene->addItem(rect);
     scene->addItem(data);
 
     if (x->lch != nullptr) {
-        auto *Lline = new QGraphicsLineItem(x->x, x->y + NodeHeight, x->lch->x + NodeWidth / 2.0, x->lch->y);
+        auto *Lline = new QGraphicsLineItem(x->x, x->y + NodeHeight, x->lch->x + x->lch->RectWidth / 2.0, x->lch->y);
         Lline->setPen(pen);
         scene->addItem(Lline);
         GenScene(x->lch, scene);
     }
     if (x->rch != nullptr) {
-        auto *Rline = new QGraphicsLineItem(x->x + NodeWidth, x->y + NodeHeight, x->rch->x + NodeWidth / 2.0, x->rch->y);
+        auto *Rline = new QGraphicsLineItem(x->x + x->RectWidth, x->y + NodeHeight, x->rch->x + x->rch->RectWidth / 2.0, x->rch->y);
         Rline->setPen(pen);
         scene->addItem(Rline);
         GenScene(x->rch, scene);
@@ -571,4 +613,19 @@ void BST::selectFlag() {
             flag = Treap_flag;
             break;
     }
+}
+
+QGraphicsTextItem* BST::GenText(TreeLink x) const {
+    auto *data = new QGraphicsTextItem;
+    auto *NodeValue = new QString;
+    auto *NodeCnt = new QString;
+    NodeValue->setNum(x->value);
+    NodeCnt->setNum(x->cnt);
+    data->setPlainText(*NodeValue + "(" + *NodeCnt + ")");
+    QFont font = data->font();
+    font.setPointSize(textHeight);
+    data->setFont(font);
+    data->setPos(x->x, x->y);
+    data->setDefaultTextColor(Qt::white);
+    return data;
 }
