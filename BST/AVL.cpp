@@ -96,84 +96,80 @@ TreeLink AVL::insert(TreeLink &p, int x, int Root_w) {
         Root = p;
         if(Root) Root->father = nullptr;
     }
-
+    TreeLink rtn;
     if(Root == nullptr){
         Root = (TreeLink) malloc(sizeof (TreeNode));
         Root->lch = Root->rch = Root->father = nullptr;
         Root->value = x;
         Root->cnt = Root->size = 1;
         Root->bf = 0;
-        return Root;
+        rtn = Root;
     }
-    TreeLink now = p;
-    TreeLink fa = nullptr;
-    while(now){
-        if(x == now->value){
-            now->cnt++;
-            push_up(now);
-            return now;
+    else {
+        TreeLink now = p;
+        TreeLink fa = nullptr;
+        while (now) {
+            if (x == now->value) {
+                now->cnt++;
+                push_up(now);
+                return now;
+            }
+            now->size++;
+            fa = now;
+            now = (x > now->value) ? now->rch : now->lch;
         }
-        now->size++;
-        fa = now;
-        now = (x > now->value) ? now->rch : now->lch;
-    }
-    now = (TreeLink) malloc(sizeof(TreeNode));
-    now->value = x;
-    now->cnt = now->size = 1;
-    now->bf = 0;
-    now->father = fa;
-    now->lch = now->rch = nullptr;
-    if (x > fa->value) fa->rch = now;
-    else fa->lch = now;
-    TreeLink rtn = now;
+        now = (TreeLink) malloc(sizeof(TreeNode));
+        now->value = x;
+        now->cnt = now->size = 1;
+        now->bf = 0;
+        now->father = fa;
+        now->lch = now->rch = nullptr;
+        if (x > fa->value) fa->rch = now;
+        else fa->lch = now;
+        rtn = now;
 
-    while(fa){
-        if(now == fa->lch) fa->bf --;
-        else fa->bf ++;
-        if(fa->bf == 0) break;
-        else if(fa->bf == 1 || fa->bf == -1) {
-            now = fa;
-            fa = now->father;
-        }
-        else if(fa->bf == 2 || fa->bf == -2) {
-            if (fa->bf == -2 && now->bf == -1) {    //LL型
-                right_rotate(now);
-                now->bf = fa->bf = 0;
-                break;
-            }
-            else if(fa->bf == 2 && now->bf == 1) {  //RR型
-                left_rotate(now);
-                now->bf = fa->bf = 0;
-                if(!now->father) Root = now;
-                break;
-            }
-            else if(fa->bf == -2 && now->bf == 1) { //LR型
-                TreeLink temp = now->rch;
-                left_rotate(temp);
-                right_rotate(temp);
-                now->bf = fa->bf = temp->bf = 0;
-                if(!temp->father) Root = temp;
-                break;
-            }
-            else if(fa->bf == 2 && now->bf == -1){ //RL型
-                TreeLink temp = now->lch;
-                right_rotate(temp);
-                left_rotate(temp);
-                now->bf = fa->bf = temp->bf = 0;
-                if(!temp->father) Root = temp;
-                break;
-            }
-            else{
+        while (fa) {
+            if (now == fa->lch) fa->bf--;
+            else fa->bf++;
+            if (fa->bf == 0) break;
+            else if (fa->bf == 1 || fa->bf == -1) {
+                now = fa;
+                fa = now->father;
+            } else if (fa->bf == 2 || fa->bf == -2) {
+                if (fa->bf == -2 && now->bf == -1) {    //LL型
+                    right_rotate(now);
+                    now->bf = fa->bf = 0;
+                    if (!now->father) Root = now;
+                    break;
+                } else if (fa->bf == 2 && now->bf == 1) {  //RR型
+                    left_rotate(now);
+                    now->bf = fa->bf = 0;
+                    if (!now->father) Root = now;
+                    break;
+                } else if (fa->bf == -2 && now->bf == 1) { //LR型
+                    TreeLink temp = now->rch;
+                    left_rotate(temp);
+                    right_rotate(temp);
+                    now->bf = fa->bf = temp->bf = 0;
+                    if (!temp->father) Root = temp;
+                    break;
+                } else if (fa->bf == 2 && now->bf == -1) { //RL型
+                    TreeLink temp = now->lch;
+                    right_rotate(temp);
+                    left_rotate(temp);
+                    now->bf = fa->bf = temp->bf = 0;
+                    if (!temp->father) Root = temp;
+                    break;
+                } else {
+                    printf("ERROR %d %d %d\n", x, fa->bf, now->bf);
+                    break;
+                }
+            } else {
                 printf("ERROR %d %d %d\n", x, fa->bf, now->bf);
                 break;
             }
         }
-        else{
-            printf("ERROR %d %d %d\n", x, fa->bf, now->bf);
-            break;
-        }
     }
-
     if(isSplit){
         if(Root_w) tempRoot->rch = Root;
         else tempRoot->lch = Root;
@@ -209,16 +205,10 @@ int AVL::del(TreeLink &p, int x, int Root_w){
             }
             if(now->rch == nullptr){
                 if(get_w(now)){
-//                    if(fa) fa->rch = now->lch;
-//                    else Root = now->lch;
-//                    if(now->lch) now->lch->father = fa;
                     Del_Node = now;
                     break;
                 }
                 else{
-//                    if(fa) fa->lch = now->lch;
-//                    else Root = now->lch;
-//                    if(now->lch) now->lch->father = fa;
                     Del_Node = now;
                     break;
                 }
@@ -228,10 +218,6 @@ int AVL::del(TreeLink &p, int x, int Root_w){
                 now->value = suf->value;
                 now->cnt = suf->cnt;
                 Del_Node = suf;
-//                if(get_w(suf))
-//                    suf->father->rch = suf->rch;
-//                else
-//                    suf->father->lch = suf->rch;
                 now = suf;
                 fa = now->father;
                 break;
@@ -245,7 +231,6 @@ int AVL::del(TreeLink &p, int x, int Root_w){
         }
     }
     while(fa){
-        if(now->lch && now->rch)  break;
         if(now == fa->lch) fa->bf ++;
         else fa->bf --;
         if(fa->bf == 0){
@@ -253,30 +238,34 @@ int AVL::del(TreeLink &p, int x, int Root_w){
             fa = now->father;
         }
         else if(fa->bf == 2 || fa->bf == -2) {
-            if (fa->bf == -2 && now->bf == -1) {    //LL型
-                right_rotate(now);
-                now->bf = fa->bf = 0;
+            TreeLink sibling = (get_w(now)) ? fa->lch : fa->rch;
+            if (fa->bf == -2 && (sibling->bf == -1 || sibling->bf == 0) ) {    //LL型
+                right_rotate(sibling);
+                if(sibling->bf) sibling->bf = fa->bf = 0;
+                else sibling->bf = 1, fa->bf = -1;
+                if(!sibling->father) Root = sibling;
                 break;
             }
-            else if(fa->bf == 2 && now->bf == 1) {  //RR型
-                left_rotate(now);
-                now->bf = fa->bf = 0;
-                if(!now->father) Root = now;
+            else if(fa->bf == 2 && (sibling->bf == 1 || sibling->bf == 0) ) {  //RR型
+                left_rotate(sibling);
+                if(sibling->bf) sibling->bf = fa->bf = 0;
+                else sibling->bf = -1, fa->bf = 1;
+                if(!sibling->father) Root = sibling;
                 break;
             }
-            else if(fa->bf == -2 && now->bf == 1) { //LR型
-                TreeLink temp = now->rch;
+            else if(fa->bf == -2 && sibling->bf == 1) { //LR型
+                TreeLink temp = sibling->rch;
                 left_rotate(temp);
                 right_rotate(temp);
-                now->bf = fa->bf = temp->bf = 0;
+                sibling->bf = fa->bf = temp->bf = 0;
                 if(!temp->father) Root = temp;
                 break;
             }
-            else if(fa->bf == 2 && now->bf == -1){ //RL型
-                TreeLink temp = now->lch;
+            else if(fa->bf == 2 && sibling->bf == -1){ //RL型
+                TreeLink temp = sibling->lch;
                 right_rotate(temp);
                 left_rotate(temp);
-                now->bf = fa->bf = temp->bf = 0;
+                sibling->bf = fa->bf = temp->bf = 0;
                 if(!temp->father) Root = temp;
                 break;
             }
@@ -399,4 +388,3 @@ void AVL::rel(TreeLink &p) {
     free(p);
     p= nullptr;
 }
-
