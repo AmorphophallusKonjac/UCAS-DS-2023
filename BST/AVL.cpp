@@ -203,7 +203,7 @@ int AVL::del(TreeLink &p, int x, int Root_w){
                 rtn = 1;
                 break;
             }
-            if(now->rch == nullptr){
+            if(now->lch == nullptr || now->rch == nullptr){
                 if(get_w(now)){ Del_Node = now; break; }
                 else{ Del_Node = now; break; }
             }
@@ -273,21 +273,37 @@ int AVL::del(TreeLink &p, int x, int Root_w){
     }
     if(rtn == 2 && Del_Node->rch){
         if(Del_Node->father){
-            if(get_w(Del_Node))
+            if(get_w(Del_Node)) {
                 Del_Node->father->rch = Del_Node->rch;
-            else
+                if(Del_Node->rch) Del_Node->rch->father = Del_Node->father;
+            }
+            else {
                 Del_Node->father->lch = Del_Node->rch;
+                if(Del_Node->rch) Del_Node->rch->father = Del_Node->father;
+            }
         }
-        else Root = Del_Node->rch;
+        else{
+            Root = Del_Node->rch;
+            if(Del_Node->rch) Del_Node->rch->father = nullptr;
+        }
+        free(Del_Node);
     }
     else if(rtn == 2){
         if(Del_Node->father){
-            if(get_w(Del_Node))
+            if(get_w(Del_Node)) {
                 Del_Node->father->rch = Del_Node->lch;
-            else
+                if(Del_Node->lch) Del_Node->lch->father = Del_Node->father;
+            }
+            else {
                 Del_Node->father->lch = Del_Node->lch;
+                if(Del_Node->lch) Del_Node->lch->father = Del_Node->father;
+            }
         }
-        else Root = Del_Node->lch;
+        else{
+            Root = Del_Node->lch;
+            if(Del_Node->rch) Del_Node->rch->father = nullptr;
+        }
+        free(Del_Node);
     }
     if(isSplit){
         if(Root_w) tempRoot->rch = Root;
