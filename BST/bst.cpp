@@ -157,7 +157,8 @@ void BST::SetPaint() {
             PaintTree(SBTtree.root, scene);
             break;
         case 2:
-            scene->addText("This is AVL");
+            //scene->addText("This is AVL");
+            PaintTree(AVLtree.Root, scene);
             break;
         case 3:
             //scene->addText("This is Treap");
@@ -200,7 +201,6 @@ void BST::CalcWidth(TreeLink x) {
 void BST::CalcPos(TreeLink t, double x, double y) {
     if (t == nullptr) return;
     t->x = x; t->y = y;
-    qDebug() << t->value << " " << t->lwidth << " " << t->rwidth;
     if (t->lch != nullptr) {
         CalcPos(t->lch, t->x + t->RectWidth / 2.0 - t->lwidth + t->lch->lwidth - t->lch->RectWidth / 2.0, y + NodeGapY + NodeHeight);
     }
@@ -255,6 +255,7 @@ void BST::PaintTree(TreeLink x, QGraphicsScene *scene) {
 }
 
 void BST::fnd() {
+    int ans;
     if (ui->inputNumber->text() == "") {
         rltLabel->setText("Please enter argument");
         SetPaint();
@@ -265,21 +266,38 @@ void BST::fnd() {
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root->lch, value);
 
             Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->lch, value, 0) ? Splaytree.Root->lch : nullptr;
+
+            Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root->lch, value);
+
+            AVL_SelectedNode = AVLtree.find_rank(AVLtree.Root->lch, value, ans);
             break;
         case 1:
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root->rch, value);
 
             Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root->rch, value, 1) ? Splaytree.Root->rch : nullptr;
+
+            Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root->rch, value);
+
+            AVL_SelectedNode = AVLtree.find_rank(AVLtree.Root->rch, value, ans);
             break;
         case 2:
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
 
             Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root, value) ? Splaytree.Root : nullptr;
+
+            Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root, value);
+
+            AVL_SelectedNode = AVLtree.find_rank(AVLtree.Root, value, ans);
+
             break;
         default:
             SBT_SelectedNode = SBTtree.fnd(SBTtree.root, value);
 
             Splay_SelectedNode = Splaytree.find_rank(Splaytree.Root, value) ? Splaytree.Root : nullptr;
+
+            Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root, value);
+
+            AVL_SelectedNode = AVLtree.find_rank(AVLtree.Root, value, ans);
     }
     selectNode();
     QString st;
@@ -310,6 +328,8 @@ void BST::ins() {
             Splay_SelectedNode = Splaytree.Root->lch;
 
             Treap_SelectedNode = Treaptree.insert(Treaptree.Root->lch, value);
+
+            AVL_SelectedNode = AVLtree.insert(AVLtree.Root->lch, value, 0);
             break;
         case 1:
             SBT_SelectedNode = SBTtree.ins(SBTtree.root->rch, value);
@@ -318,6 +338,8 @@ void BST::ins() {
             Splay_SelectedNode = Splaytree.Root->rch;
 
             Treap_SelectedNode = Treaptree.insert(Treaptree.Root->rch, value);
+
+            AVL_SelectedNode = AVLtree.insert(AVLtree.Root->rch, value, 1);
             break;
         case 2:
             SBT_SelectedNode = SBTtree.ins(SBTtree.root, value);
@@ -326,6 +348,8 @@ void BST::ins() {
             Splay_SelectedNode = Splaytree.Root;
 
             Treap_SelectedNode = Treaptree.insert(Treaptree.Root, value);
+
+            AVL_SelectedNode = AVLtree.insert(AVLtree.Root, value);
             break;
         default:
             SBT_SelectedNode = SBTtree.ins(SBTtree.root, value);
@@ -334,6 +358,8 @@ void BST::ins() {
             Splay_SelectedNode = Splaytree.Root;
 
             Treap_SelectedNode = Treaptree.insert(Treaptree.Root, value);
+
+            AVL_SelectedNode = AVLtree.insert(AVLtree.Root, value);
     }
     selectNode();
     QString st;
@@ -348,6 +374,7 @@ void BST::ins() {
 }
 
 void BST::del() {
+    int ans;
     if (ui->inputNumber->text() == "") {
         rltLabel->setText("Please enter argument");
         SetPaint();
@@ -365,6 +392,9 @@ void BST::del() {
 
             Treap_flag = Treaptree.del(Treaptree.Root->lch, value);
             Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root->lch, value);
+
+            AVL_flag = AVLtree.del(AVLtree.Root->lch, value, 0);
+            AVL_SelectedNode = AVLtree.find_rank(AVLtree.Root->lch, value, ans);
             break;
         case 1:
             SBT_flag = SBTtree.del(SBTtree.root->rch, value);
@@ -375,6 +405,9 @@ void BST::del() {
 
             Treap_flag = Treaptree.del(Treaptree.Root->rch, value);
             Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root->rch, value);
+
+            AVL_flag = AVLtree.del(AVLtree.Root->rch, value, 1);
+            AVL_SelectedNode = AVLtree.find_rank(AVLtree.Root->rch, value, ans);
             break;
         case 2:
             SBT_flag = SBTtree.del(SBTtree.root, value);
@@ -385,6 +418,9 @@ void BST::del() {
 
             Treap_flag = Treaptree.del(Treaptree.Root, value);
             Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root, value);
+
+            AVL_flag = AVLtree.del(AVLtree.Root->lch, value);
+            AVL_SelectedNode = AVLtree.find_rank(AVLtree.Root, value, ans);
             break;
         default:
             SBT_flag = SBTtree.del(SBTtree.root->lch, value);
@@ -395,6 +431,9 @@ void BST::del() {
 
             Treap_flag = Treaptree.del(Treaptree.Root, value);
             Treap_SelectedNode = Treaptree.find_rank(Treaptree.Root, value);
+
+            AVL_flag = AVLtree.del(AVLtree.Root->lch, value);
+            AVL_SelectedNode = AVLtree.find_rank(AVLtree.Root, value, ans);
     }
     selectNode();
     selectFlag();
@@ -440,6 +479,9 @@ void BST::reset() {
     Treaptree.Root = nullptr;
     Treaptree.isSplit = 0;
     rltLabel->setText("reset");
+    AVLtree.rel(AVLtree.Root);
+    AVLtree.Root = nullptr;
+    AVLtree.isSplit = 0;
     SetPaint();
 }
 
@@ -472,6 +514,9 @@ void BST::split() {
     Splaytree.split(value);
     Splay_SelectedNode = nullptr;
     Treaptree.split(value);
+    Treap_SelectedNode = nullptr;
+    AVLtree.split(value);
+    AVL_SelectedNode = nullptr;
     SelectedTree = 0;
     rltLabel->setText("split complete");
     SelectedNode = nullptr;
@@ -491,6 +536,9 @@ void BST::merge() {
     Splaytree.merge();
     Splay_SelectedNode = nullptr;
     Treaptree.merge();
+    Treap_SelectedNode = nullptr;
+    AVLtree.merge();
+    AVL_SelectedNode = nullptr;
     SelectedTree = 2;
     rltLabel->setText("merge complete");
     SelectedNode = nullptr;
@@ -580,9 +628,29 @@ QGraphicsTextItem* BST::GenText(TreeLink x) const {
     auto *data = new QGraphicsTextItem;
     auto *NodeValue = new QString;
     auto *NodeCnt = new QString;
+    auto *NodeSpMsg = new QString;
     NodeValue->setNum(x->value);
     NodeCnt->setNum(x->cnt);
-    data->setPlainText(*NodeValue + "(" + *NodeCnt + ")");
+    switch (BSTtype) {
+        case 2:
+            NodeSpMsg->setNum(x->bf);
+            break;
+        case 3:
+            NodeSpMsg->setNum(x->key);
+            break;
+        default:
+            NodeSpMsg->clear();
+    }
+    switch (BSTtype) {
+        case 2:
+            data->setPlainText(*NodeValue + "(" + *NodeCnt + ")" + " bf:" + *NodeSpMsg);
+            break;
+        case 3:
+            data->setPlainText(*NodeValue + "(" + *NodeCnt + ")" + " rnd:" + *NodeSpMsg);
+            break;
+        default:
+            data->setPlainText(*NodeValue + "(" + *NodeCnt + ")" + *NodeSpMsg);
+    }
     QFont font = data->font();
     font.setPointSize(textHeight);
     data->setFont(font);

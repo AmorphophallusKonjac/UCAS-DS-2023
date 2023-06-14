@@ -11,6 +11,7 @@
 #include "SBT.h"
 #include "Splay.h"
 #include "Treap.h"
+#include "AVL.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -28,6 +29,7 @@ public:
     SBT SBTtree;
     Splay_Tree Splaytree;
     TREAP Treaptree;
+    AVL AVLtree;
     int value;
     int Splited;
 public slots:
