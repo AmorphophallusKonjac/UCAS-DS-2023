@@ -239,11 +239,15 @@ void SBT::Split_Tree(TreeLink x, TreeLink &y, TreeLink &z, int v) {
         y = x;
         z = nullptr;
         Split_Tree(x->rch, y->rch, z, v);
+        maintain(y, false);
+        maintain(y, true);
     }
     else {
         z = x;
         y = nullptr;
         Split_Tree(x->lch, y, z->lch, v);
+        maintain(z, false);
+        maintain(z, true);
     }
 }
 
