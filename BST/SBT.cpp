@@ -71,7 +71,7 @@ void SBT::maintain(TreeLink &x, bool t) {
             LeftRotate(x);
         else
             //if (x->rch->lch->size > x->rch->size) {
-            if (rlsize > rsize) {
+            if (rlsize > lsize) {
                 RightRotate(x->rch);
                 LeftRotate(x);
             }
